@@ -1,8 +1,9 @@
 package com.bookstore.model;
 
 public class AdminUser extends User {
-    //Protected attributes
+    //Private attributes
     private String adminLevel;
+    private String permissions;
 
     //Default constructor
     public AdminUser() {
@@ -10,9 +11,10 @@ public class AdminUser extends User {
     }
 
     //Parameterized constructor
-    public AdminUser(String userId, String username, String password, String email, String adminLevel) {
+    public AdminUser(String userId, String username, String password, String email, String adminLevel, String permissions) {
         super(userId, username, password, email);
         this.adminLevel = adminLevel;
+        this.permissions = permissions;
     }
 
     //Getters
@@ -20,13 +22,22 @@ public class AdminUser extends User {
         return adminLevel;
     }
 
+    public String getPermissions() {
+        return permissions;
+    }
+
+    //Setters
     public void setAdminLevel(String adminLevel) {
         this.adminLevel = adminLevel;
+    }
+
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
     }
 
     //Display role details
     @Override
     public String getRoleDetails() {
-        return "Admin Level: " + adminLevel;
+        return "System Administrator [" + adminLevel + "] - Permissions: " + permissions;
     }
 }
