@@ -1,12 +1,17 @@
 package com.bookstore.model;
 
-//AdminUser inherits from User
 public class AdminUser extends User {
+    //Protected attributes
     private String adminLevel;
 
+    //Default constructor
+    public AdminUser() {
+        super();
+    }
+
     //Parameterized constructor
-    public AdminUser(String userId, String username, String password, String adminLevel) {
-        super(userId, username, password);
+    public AdminUser(String userId, String username, String password, String email, String adminLevel) {
+        super(userId, username, password, email);
         this.adminLevel = adminLevel;
     }
 
@@ -15,8 +20,13 @@ public class AdminUser extends User {
         return adminLevel;
     }
 
-    //Setters
     public void setAdminLevel(String adminLevel) {
         this.adminLevel = adminLevel;
+    }
+
+    //Display role details
+    @Override
+    public String getRoleDetails() {
+        return "Admin Level: " + adminLevel;
     }
 }
