@@ -1,20 +1,22 @@
 package com.bookstore.model;
 
-public class User {
+public abstract class User {
     //Protected attributes
     protected String userId;
     protected String username;
     protected String password;
+    protected String email;
 
     //Default constructor
     public User() {
     }
 
     //Parameterized constructor
-    public User(String userId, String username, String password) {
+    public User(String userId, String username, String password, String email) {
         this.userId = userId;
         this.username = username;
         this.password = password;
+        this.email = email;
     }
 
     //Getters
@@ -30,6 +32,10 @@ public class User {
         return password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     //Setters
     public void setUserId(String userId) {
         this.userId = userId;
@@ -42,4 +48,11 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    //Abstract method
+    public abstract String getRoleDetails();
 }
