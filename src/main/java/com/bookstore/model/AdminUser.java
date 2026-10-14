@@ -40,4 +40,18 @@ public class AdminUser extends User {
     public String getRoleDetails() {
         return "System Administrator [" + adminLevel + "] - Permissions: " + permissions;
     }
+
+    //Convert object to text for admins.txt
+    public String toFileString() {
+        return userId + "," + username + "," + password + "," + email + "," + adminLevel + "," + permissions;
+    }
+
+    //Create object from text read from admins.txt
+    public static AdminUser fromFileString(String line) {
+        String[] parts = line.split(",");
+        if (parts.length == 6) {
+            return new AdminUser(parts[0].trim(), parts[1].trim(), parts[2].trim(), parts[3].trim(), parts[4].trim(), parts[5].trim());
+        }
+        return null;
+    }
 }
