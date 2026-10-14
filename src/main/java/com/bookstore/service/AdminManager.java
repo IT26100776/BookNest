@@ -54,4 +54,55 @@ public class AdminManager {
             }
         }
     }
+
+    //Save admins to text file
+    private void saveAdminsToFile() {
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(FILE_PATH));
+            for (AdminUser admin : adminList) {
+                writer.write(admin.toFileString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error writing file: " + e.getMessage());
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                System.out.println("Error closing writer: " + e.getMessage());
+            }
+        }
+    }
+
+    //Add new admin
+    public boolean addAdmin(AdminUser newAdmin) {
+        for (AdminUser admin : adminList) {
+            if (admin.getUserId().equalsIgnoreCase(newAdmin.getUserId()) ||
+                    admin.getUsername().equalsIgnoreCase(newAdmin.getUsername())) {
+                System.out.println("Error: Admin ID or Username already exists!");
+                return false;
+            }
+        }
+        adminList.add(newAdmin);
+        saveAdminsToFile();
+        return true;
+    }
+
+    //Get all admins
+    public List<AdminUser> getAllAdmins() {
+        return adminList;
+    }
+
+    //Find admin by ID
+    public AdminUser getAdminById(String userId) {
+        for (AdminUser admin : adminList) {
+            if (admin.getUserId().equalsIgnoreCase(userId)) {
+                return admin;
+            }
+        }
+        return null;
+    }
 }
