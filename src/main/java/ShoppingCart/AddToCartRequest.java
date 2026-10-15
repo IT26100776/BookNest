@@ -34,7 +34,12 @@ public class AddToCartRequest {
     public AddToCartRequest() {
     }
 
-
+    /**
+     * Factory method: Instantiates the appropriate polymorphic subclass of CartItem.
+     * Demonstrates Polymorphism and Object-Oriented Factory pattern.
+     *
+     * @return Concrete CartItem (PhysicalBookCartItem or DigitalBookCartItem)
+     */
     public CartItem toDomainCartItem() {
         if (itemType == ItemType.DIGITAL_BOOK) {
             return new DigitalBookCartItem(
