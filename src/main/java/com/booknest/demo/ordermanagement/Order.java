@@ -1,5 +1,5 @@
 
-package ordermanagement;
+package com.booknest.demo.ordermanagement;
 
 public class Order {
     private int orderId;
