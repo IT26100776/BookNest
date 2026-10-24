@@ -6,7 +6,7 @@ import java.util.List;
 public class Cart {
 
     private int customerId;
-    private List<g> items;
+    private List<CartItem> items;
 
     public Cart(int customerId){
         this.customerId = customerId;
@@ -17,7 +17,7 @@ public class Cart {
         return customerId;
     }
 
-    public List<g> getItems(){
+    public List<CartItem> getItems(){
         return items;
     }
 
