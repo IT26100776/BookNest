@@ -79,6 +79,21 @@ public class AdminManager {
 
     //Add new admin
     public boolean addAdmin(AdminUser newAdmin) {
+        if (newAdmin == null) {
+            System.out.println("Error: Admin details are required!");
+            return false;
+        }
+
+        if (!isValidField(newAdmin.getUserId()) ||
+                !isValidField(newAdmin.getUsername()) ||
+                !isValidField(newAdmin.getPassword()) ||
+                !isValidField(newAdmin.getEmail()) ||
+                !isValidField(newAdmin.getAdminLevel()) ||
+                !isValidField(newAdmin.getPermissions())) {
+            System.out.println("Error: Fill in all admin fields without commas or line breaks!");
+            return false;
+        }
+
         for (AdminUser admin : adminList) {
             if (admin.getUserId().equalsIgnoreCase(newAdmin.getUserId()) ||
                     admin.getUsername().equalsIgnoreCase(newAdmin.getUsername())) {
@@ -89,6 +104,15 @@ public class AdminManager {
         adminList.add(newAdmin);
         saveAdminsToFile();
         return true;
+    }
+
+    private boolean isValidField(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return false;
+        }
+
+        //Comma separated fields with ","
+        return !value.contains(",") && !value.contains("\n") && !value.contains("\r");
     }
 
     //Get all admins
