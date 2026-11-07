@@ -2,6 +2,9 @@ package com.bookstore.service;
 
 import com.bookstore.model.AdminUser;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,24 +58,35 @@ public class AdminManager {
         }
     }
 
-    //Save admins to text file
-    private void saveAdminsToFile() {
-        BufferedWriter writer = null;
+    //Save admins to txt
+    private boolean saveAdminsToFile() {
+        Path temporaryFile = null;
         try {
-            writer = new BufferedWriter(new FileWriter(FILE_PATH));
-            for (AdminUser admin : adminList) {
-                writer.write(admin.toFileString());
-                writer.newLine();
+            Path adminFile = Path.of(FILE_PATH).toAbsolutePath();
+            temporaryFile = Files.createTempFile(adminFile.getParent(), "admins-", ".tmp");
+
+            //Write admin to the temporary file
+            try (BufferedWriter writer = Files.newBufferedWriter(temporaryFile)) {
+                for (AdminUser admin : adminList) {
+                    writer.write(admin.toFileString());
+                    writer.newLine();
+                }
             }
+
+            Files.move(temporaryFile, adminFile,
+                    StandardCopyOption.REPLACE_EXISTING,
+                    StandardCopyOption.ATOMIC_MOVE);
+            return true;
         } catch (IOException e) {
             System.out.println("Error writing file: " + e.getMessage());
+            return false;
         } finally {
             try {
-                if (writer != null) {
-                    writer.close();
+                if (temporaryFile != null) {
+                    Files.deleteIfExists(temporaryFile);
                 }
             } catch (IOException e) {
-                System.out.println("Error closing writer: " + e.getMessage());
+                System.out.println("Error removing temporary file: " + e.getMessage());
             }
         }
     }
@@ -102,7 +116,11 @@ public class AdminManager {
             }
         }
         adminList.add(newAdmin);
-        saveAdminsToFile();
+        if (!saveAdminsToFile()) {
+            //Remove the new admin if saving fails
+            adminList.remove(newAdmin);
+            return false;
+        }
         return true;
     }
 
