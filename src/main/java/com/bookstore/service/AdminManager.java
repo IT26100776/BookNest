@@ -37,6 +37,7 @@ public class AdminManager {
         try {
             reader = new BufferedReader(new FileReader(file));
             String line;
+
             while ((line = reader.readLine()) != null) {
                 if (!line.trim().isEmpty()) {
                     AdminUser admin = AdminUser.fromFileString(line);
@@ -115,10 +116,50 @@ public class AdminManager {
                 return false;
             }
         }
+
         adminList.add(newAdmin);
         if (!saveAdminsToFile()) {
             //Remove the new admin if saving fails
             adminList.remove(newAdmin);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean updateAdmin(String userId, String username, String email, String adminLevel, String permissions) {
+        if (!isValidField(userId) || 
+            !isValidField(username) || 
+            !isValidField(email) || 
+            !isValidField(adminLevel) 
+            || !isValidField(permissions)) {
+            System.out.println("Error: Fill in all admin fields without commas or line breaks!");
+            return false;
+        }
+
+        AdminUser currentAdmin = getAdminById(userId.trim());
+        if (currentAdmin == null) {
+            System.out.println("Error: Admin not found!");
+            return false;
+        }
+
+        String updatedUsername = username.trim();
+        for (AdminUser admin : adminList) {
+            if (admin != currentAdmin && admin.getUsername().trim().equalsIgnoreCase(updatedUsername)) {
+                System.out.println("Error: Username already exists!");
+                return false;
+            }
+        }
+
+        //Keep the same ID and password
+        AdminUser updatedAdmin = new AdminUser(currentAdmin.getUserId(), updatedUsername,
+                currentAdmin.getPassword(), email.trim(), adminLevel.trim(), permissions.trim());
+
+        int index = adminList.indexOf(currentAdmin);
+        adminList.set(index, updatedAdmin);
+
+        if (!saveAdminsToFile()) {
+            //Keep the old details if saving fails
+            adminList.set(index, currentAdmin);
             return false;
         }
         return true;
