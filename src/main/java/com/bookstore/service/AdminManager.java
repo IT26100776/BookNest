@@ -126,12 +126,10 @@ public class AdminManager {
         return true;
     }
 
-    public boolean updateAdmin(String userId, String username, String email, String adminLevel, String permissions) {
-        if (!isValidField(userId) || 
-            !isValidField(username) || 
-            !isValidField(email) || 
-            !isValidField(adminLevel) 
-            || !isValidField(permissions)) {
+    public boolean updateAdmin(String userId, String username, String email,
+                               String adminLevel, String permissions) {
+        if (!isValidField(userId) || !isValidField(username) || !isValidField(email)
+                || !isValidField(adminLevel) || !isValidField(permissions)) {
             System.out.println("Error: Fill in all admin fields without commas or line breaks!");
             return false;
         }
@@ -163,6 +161,53 @@ public class AdminManager {
             return false;
         }
         return true;
+    }
+
+    public boolean deleteAdmin(String userId, String signedInAdminId) {
+        if (!isValidField(userId) || !isValidField(signedInAdminId)) {
+            System.out.println("Error: Both admin IDs are required!");
+            return false;
+        }
+
+        AdminUser adminToDelete = getAdminById(userId.trim());
+        if (adminToDelete == null) {
+            System.out.println("Error: Admin not found!");
+            return false;
+        }
+
+        if (adminToDelete.getUserId().trim().equalsIgnoreCase(signedInAdminId.trim())) {
+            System.out.println("Error: You cannot delete your own account!");
+            return false;
+        }
+
+        if (isSuperAdmin(adminToDelete)) {
+            int superAdminCount = 0;
+            for (AdminUser admin : adminList) {
+                if (isSuperAdmin(admin)) {
+                    superAdminCount++;
+                }
+            }
+
+            if (superAdminCount == 1) {
+                System.out.println("Error: You cannot delete the last super admin!");
+                return false;
+            }
+        }
+
+        int index = adminList.indexOf(adminToDelete);
+        adminList.remove(index);
+
+        if (!saveAdminsToFile()) {
+            //Add the admin back if saving fails
+            adminList.add(index, adminToDelete);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isSuperAdmin(AdminUser admin) {
+        String level = admin.getAdminLevel();
+        return level != null && "SUPER_ADMIN".equalsIgnoreCase(level.trim());
     }
 
     private boolean isValidField(String value) {
