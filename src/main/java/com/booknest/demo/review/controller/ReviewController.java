@@ -1,4 +1,5 @@
 package com.booknest.demo.review.controller;
+import org.springframework.http.HttpMethod;
 import com.booknest.demo.review.model.Review;
 import com.booknest.demo.review.service.ReviewService;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,7 @@ public class ReviewController {
         try {
             return ResponseEntity.ok(service.updateReview(id, review));
         } catch (IllegalArgumentException e) {
-            HttpStatus status = e.getMessage().equals("Review not found.")
+            HttpStatus status = "Review not found.".equals(e.getMessage())
                     ? HttpStatus.NOT_FOUND
                     : HttpStatus.BAD_REQUEST;
 
