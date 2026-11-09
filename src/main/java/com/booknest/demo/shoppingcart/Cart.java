@@ -6,11 +6,18 @@ import java.util.List;
 
 public class Cart {
 
-    private int customerId;
+    private String customerId;
     private List<CartItem> items;
     private CartFileManager fileManager;
 
-    public Cart(int customerId) throws IOException {
+    // Constructor
+    public Cart(String customerId) throws IOException {
+
+        if (customerId == null || customerId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Customer ID cannot be empty."
+            );
+        }
 
         this.customerId = customerId;
 
@@ -20,7 +27,8 @@ public class Cart {
         this.items = fileManager.loadCart(customerId);
     }
 
-    public int getCustomerId() {
+    // Get customer ID
+    public String getCustomerId() {
         return customerId;
     }
 
@@ -30,18 +38,22 @@ public class Cart {
     }
 
     // Add item to cart
-    public void addItem(int bookId, int quantity) throws IOException {
+    public void addItem(int bookId, int quantity)
+            throws IOException {
 
         if (bookId <= 0 || quantity <= 0) {
             throw new IllegalArgumentException(
-                    "Book ID and quantity must be positive");
+                    "Book ID and quantity must be positive."
+            );
         }
 
         for (CartItem item : items) {
 
             if (item.getBookId() == bookId) {
 
-                item.setQuantity(item.getQuantity() + quantity);
+                item.setQuantity(
+                        item.getQuantity() + quantity
+                );
 
                 fileManager.saveCart(customerId, items);
                 return;
@@ -56,7 +68,9 @@ public class Cart {
     // Remove item from cart
     public void removeItem(int bookId) throws IOException {
 
-        items.removeIf(item -> item.getBookId() == bookId);
+        items.removeIf(
+                item -> item.getBookId() == bookId
+        );
 
         fileManager.saveCart(customerId, items);
     }
@@ -67,7 +81,8 @@ public class Cart {
 
         if (quantity <= 0) {
             throw new IllegalArgumentException(
-                    "Quantity must be greater than zero");
+                    "Quantity must be greater than zero."
+            );
         }
 
         for (CartItem item : items) {
@@ -80,6 +95,10 @@ public class Cart {
                 return;
             }
         }
+
+        throw new IllegalArgumentException(
+                "Book not found in cart."
+        );
     }
 
     // Clear entire cart

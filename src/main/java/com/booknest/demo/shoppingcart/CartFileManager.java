@@ -5,16 +5,18 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CartFileManager {
 
-    private final Path filePath = Path.of("carts.txt");
+    private final Path filePath =
+            Path.of("data", "carts.txt");
 
-    // Load all cart items for a customer
-    public List<CartItem> loadCart(int customerId)
-            throws IOException {
+    // Load cart items for a customer
+    public synchronized List<CartItem> loadCart(
+            String customerId) throws IOException {
 
         List<CartItem> items = new ArrayList<>();
 
@@ -23,7 +25,8 @@ public class CartFileManager {
         }
 
         List<String> lines = Files.readAllLines(
-                filePath, StandardCharsets.UTF_8);
+                filePath, StandardCharsets.UTF_8
+        );
 
         for (String line : lines) {
 
@@ -38,16 +41,20 @@ public class CartFileManager {
             }
 
             try {
-                int savedCustomerId = Integer.parseInt(data[0]);
+                String savedCustomerId = data[0];
                 int bookId = Integer.parseInt(data[1]);
                 int quantity = Integer.parseInt(data[2]);
 
-                if (savedCustomerId == customerId) {
+                if (savedCustomerId.equals(customerId)
+                        && bookId > 0 && quantity > 0) {
+
                     items.add(new CartItem(bookId, quantity));
                 }
 
             } catch (NumberFormatException e) {
-                System.out.println("Invalid cart record: " + line);
+                System.out.println(
+                        "Invalid cart record: " + line
+                );
             }
         }
 
@@ -55,36 +62,39 @@ public class CartFileManager {
     }
 
     // Save cart items for a customer
-    public void saveCart(int customerId, List<CartItem> items)
-            throws IOException {
+    public synchronized void saveCart(
+            String customerId,
+            List<CartItem> items) throws IOException {
+
+        if (customerId == null || customerId.isBlank()
+                || customerId.contains("|")
+                || customerId.contains("\n")
+                || customerId.contains("\r")) {
+            throw new IllegalArgumentException(
+                    "Invalid customer ID."
+            );
+        }
+
+        Files.createDirectories(filePath.getParent());
 
         List<String> lines = new ArrayList<>();
 
         if (Files.exists(filePath)) {
+
             for (String line : Files.readAllLines(
                     filePath, StandardCharsets.UTF_8)) {
 
                 String[] data = line.split("\\|", -1);
 
-                if (data.length != 3) {
-                    lines.add(line);
-                    continue;
-                }
-
-                try {
-                    int savedCustomerId = Integer.parseInt(data[0]);
-
-                    if (savedCustomerId != customerId) {
-                        lines.add(line);
-                    }
-
-                } catch (NumberFormatException e) {
+                if (data.length != 3
+                        || !data[0].equals(customerId)) {
                     lines.add(line);
                 }
             }
         }
 
         for (CartItem item : items) {
+
             lines.add(
                     customerId + "|"
                             + item.getBookId() + "|"
@@ -92,7 +102,27 @@ public class CartFileManager {
             );
         }
 
-        Files.write(filePath, lines, StandardCharsets.UTF_8);
+        Path tempFile = Files.createTempFile(
+                filePath.getParent(),
+                "carts-",
+                ".tmp"
+        );
+
+        try {
+            Files.write(
+                    tempFile,
+                    lines,
+                    StandardCharsets.UTF_8
+            );
+
+            Files.move(
+                    tempFile,
+                    filePath,
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
     }
 }
-
