@@ -1,5 +1,6 @@
 package com.booknest.demo.review.repository;
 
+import com.booknest.demo.review.model.VerifiedReview;
 import com.booknest.demo.review.model.PublicReview;
 import com.booknest.demo.review.model.Review;
 import org.springframework.stereotype.Repository;
@@ -44,7 +45,6 @@ public class ReviewRepository {
 
     public synchronized List<Review> findAll() {
         List<Review> reviews = new ArrayList<>();
-
         try {
             for (String line :
                     Files.readAllLines(filePath, StandardCharsets.UTF_8)) {
@@ -55,18 +55,50 @@ public class ReviewRepository {
 
                 String[] parts = line.split("\\|", -1);
 
-                if (parts.length != 5) {
-                    continue;
-                }
-
                 try {
-                    reviews.add(new PublicReview(
-                            parts[0],
-                            decode(parts[1]),
-                            decode(parts[2]),
-                            Integer.parseInt(parts[3]),
-                            decode(parts[4])
-                    ));
+                    Review review;
+
+                    // Support old records (5 fields)
+                    if (parts.length == 5) {
+                        review = new PublicReview(
+                                parts[0],
+                                decode(parts[1]),
+                                decode(parts[2]),
+                                Integer.parseInt(parts[3]),
+                                decode(parts[4])
+                        );
+                    }
+
+                    // Support new records (6 fields)
+                    else if (parts.length == 6) {
+
+                        String type = parts[1];
+
+                        if (type.equals("VERIFIED")) {
+                            review = new VerifiedReview(
+                                    parts[0],
+                                    decode(parts[2]),
+                                    decode(parts[3]),
+                                    Integer.parseInt(parts[4]),
+                                    decode(parts[5])
+                            );
+                        } else if (type.equals("PUBLIC")) {
+                            review = new PublicReview(
+                                    parts[0],
+                                    decode(parts[2]),
+                                    decode(parts[3]),
+                                    Integer.parseInt(parts[4]),
+                                    decode(parts[5])
+                            );
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+
+                    reviews.add(review);
+
                 } catch (IllegalArgumentException e) {
                     // Skip malformed records.
                 }
@@ -79,12 +111,19 @@ public class ReviewRepository {
         }
     }
 
+
     public synchronized void saveAll(List<Review> reviews) {
         List<String> lines = new ArrayList<>();
 
         for (Review review : reviews) {
+
+            String type = review instanceof VerifiedReview
+                    ? "VERIFIED"
+                    : "PUBLIC";
+
             lines.add(
                     review.getId() + "|" +
+                            type + "|" +
                             encode(review.getBookId()) + "|" +
                             encode(review.getReviewerName()) + "|" +
                             review.getRating() + "|" +

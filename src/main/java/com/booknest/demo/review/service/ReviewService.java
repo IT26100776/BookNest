@@ -21,8 +21,14 @@ public class ReviewService {
     }
 
     public List<Review> getReviewsByBook(String bookId) {
+        if (bookId == null || bookId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Book ID is required.");
+        }
+
         return repository.findAll().stream()
-                .filter(r -> r.getBookId().equalsIgnoreCase(bookId))
+                .filter(r -> r.getBookId()
+                        .equalsIgnoreCase(bookId.trim()))
                 .collect(java.util.stream.Collectors.toList());
     }
 
