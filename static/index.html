@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Nest</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fa;
+            margin: 0;
+            color: #243047;
+        }
+
+        header {
+            background: #23395d;
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 850px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 24px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #00000012;
+        }
+
+        label {
+            display: block;
+            margin-top: 14px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 11px;
+            margin-top: 6px;
+            border: 1px solid #ccd2dc;
+            border-radius: 6px;
+            font: inherit;
+        }
+
+        button {
+            border: none;
+            padding: 10px 15px;
+            margin: 8px 5px 0 0;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #315da8;
+            color: white;
+        }
+
+        button.delete {
+            background: #b83232;
+        }
+
+        button.cancel {
+            background: #626d7e;
+        }
+
+        .review {
+            border: 1px solid #e0e4eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .rating {
+            color: #b87900;
+            font-weight: bold;
+        }
+
+        #message {
+            margin: 12px 0;
+        }
+
+        .error {
+            color: #b83232;
+        }
+
+        .success {
+            color: #187545;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <h1>Online Bookstore</h1>
+    <p>Customer Reviews and Feedback</p>
+</header>
+
+<main>
+    <section class="panel">
+        <h2 id="formTitle">Write a Review</h2>
+
+        <form id="reviewForm">
+            <input type="hidden" id="reviewId">
+
+            <label for="bookId">Book ID</label>
+            <input id="bookId" required placeholder="e.g. B001">
+
+            <label for="reviewerName">Your Name</label>
+            <input id="reviewerName" required maxlength="100">
+
+            <label for="rating">Rating</label>
+            <select id="rating" required>
+                <option value="5">5 - Excellent</option>
+                <option value="4">4 - Very Good</option>
+                <option value="3">3 - Good</option>
+                <option value="2">2 - Fair</option>
+                <option value="1">1 - Poor</option>
+            </select>
+
+            <label for="comment">Your Feedback</label>
+            <textarea id="comment" rows="4" required maxlength="2000"
+                      placeholder="Tell us what you thought about the book"></textarea>
+
+            <button type="submit" id="submitButton">Submit Review</button>
+            <button type="button" id="cancelButton" class="cancel"
+                    hidden>Cancel Edit</button>
+        </form>
+
+        <p id="message" role="status"></p>
+    </section>
+
+    <section class="panel">
+        <h2>Find Reviews</h2>
+
+        <label for="searchBookId">Filter by Book ID (optional)</label>
+        <input id="searchBookId" placeholder="e.g. B001">
+
+        <button type="button" id="searchButton">Search</button>
+        <button type="button" id="showAllButton">Show All</button>
+
+        <div id="reviews"></div>
+    </section>
+</main>
+
+<script>
+    const API = "/api/reviews";
+
+    const form = document.getElementById("reviewForm");
+    const message = document.getElementById("message");
+    const reviewsContainer = document.getElementById("reviews");
+
+    let editingId = null;
+
+    async function request(url, options = {}) {
+        const response = await fetch(url, {
+            ...options,
+            headers: {
+                "Content-Type": "application/json",
+                ...(options.headers || {})
+            }
+        });
+
+        const text = await response.text();
+        let data = null;
+
+        try {
+            data = text ? JSON.parse(text) : null;
+        } catch {
+            data = text;
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                data?.error || data?.message || "Request failed."
+            );
+        }
+
+        return data;
+    }
+
+    function showMessage(text, isError = false) {
+        message.textContent = text;
+        message.className = isError ? "error" : "success";
+    }
+
+    function resetForm() {
+        form.reset();
+        editingId = null;
+
+        document.getElementById("reviewId").value = "";
+        document.getElementById("formTitle").textContent = "Write a Review";
+        document.getElementById("submitButton").textContent = "Submit Review";
+        document.getElementById("cancelButton").hidden = true;
+    }
+
+    form.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const review = {
+            bookId: document.getElementById("bookId").value.trim(),
+            reviewerName: document.getElementById("reviewerName").value.trim(),
+            rating: Number(document.getElementById("rating").value),
+            comment: document.getElementById("comment").value.trim()
+        };
+
+        try {
+            if (editingId) {
+                await request(`${API}/${encodeURIComponent(editingId)}`, {
+                    method: "PUT",
+                    body: JSON.stringify(review)
+                });
+
+                showMessage("Review updated successfully.");
+            } else {
+                await request(API, {
+                    method: "POST",
+                    body: JSON.stringify(review)
+                });
+
+                showMessage("Review submitted successfully.");
+            }
+
+            resetForm();
+            await loadReviews();
+        } catch (error) {
+            showMessage(error.message, true);
+        }
+    });
+
+    async function loadReviews() {
+        const bookId = document.getElementById("searchBookId")
+            .value.trim();
+
+        const url = bookId
+            ? `${API}/book/${encodeURIComponent(bookId)}`
+            : API;
+
+        try {
+            const reviews = await request(url);
+            reviewsContainer.replaceChildren();
+
+            if (!reviews.length) {
+                const empty = document.createElement("p");
+                empty.textContent = "No reviews found.";
+                reviewsContainer.appendChild(empty);
+                return;
+            }
+
+            reviews.forEach(review => {
+                const card = document.createElement("article");
+                card.className = "review";
+
+                const title = document.createElement("h3");
+                title.textContent = `Book: ${review.bookId}`;
+
+                const name = document.createElement("p");
+                name.textContent = `Reviewer: ${review.reviewerName}`;
+
+                const rating = document.createElement("p");
+                rating.className = "rating";
+                rating.textContent = `Rating: ${"★".repeat(review.rating)} (${review.rating}/5)`;
+
+                const comment = document.createElement("p");
+                comment.textContent = review.comment;
+
+                const editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.addEventListener("click", () => editReview(review));
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.className = "delete";
+                deleteButton.addEventListener("click", () => deleteReview(review.id));
+
+                card.append(title, name, rating, comment, editButton, deleteButton);
+                reviewsContainer.appendChild(card);
+            });
+        } catch (error) {
+            showMessage(error.message, true);
+        }
+    }
+
+    function editReview(review) {
+        editingId = review.id;
+
+        document.getElementById("bookId").value = review.bookId;
+        document.getElementById("reviewerName").value = review.reviewerName;
+        document.getElementById("rating").value = String(review.rating);
+        document.getElementById("comment").value = review.comment;
+
+        document.getElementById("formTitle").textContent = "Edit Review";
+        document.getElementById("submitButton").textContent = "Save Changes";
+        document.getElementById("cancelButton").hidden = false;
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function deleteReview(id) {
+        if (!confirm("Are you sure you want to delete this review?")) {
+            return;
+        }
+
+        try {
+            await request(`${API}/${encodeURIComponent(id)}`, {
+                method: "DELETE"
+            });
+
+            if (editingId === id) {
+                resetForm();
+            }
+
+            showMessage("Review deleted successfully.");
+            await loadReviews();
+        } catch (error) {
+            showMessage(error.message, true);
+        }
+    }
+
+    document.getElementById("cancelButton").addEventListener("click", resetForm);
+
+    document.getElementById("searchButton").addEventListener("click", loadReviews);
+
+    document.getElementById("showAllButton").addEventListener("click", async () => {
+        document.getElementById("searchBookId").value = "";
+        await loadReviews();
+    });
+
+    loadReviews();
+</script>
+</body>
+</html>
