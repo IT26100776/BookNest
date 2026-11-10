@@ -1,4 +1,4 @@
-package com.bookstore.model;
+package com.booknest.demo.admin.model;
 
 public abstract class User {
     //Protected attributes
