@@ -1,4 +1,4 @@
-package com.bookstore.model;
+package com.booknest.demo.admin.model;
 
 public class AdminUser extends User {
     //Private attributes
