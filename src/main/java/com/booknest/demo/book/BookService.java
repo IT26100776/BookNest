@@ -136,4 +136,70 @@ public class BookService {
 
         return results;
     }
+
+    // 7. Reduce book stock when an order is placed
+    public void reduceStock(int bookId, int quantity) {
+
+        if (quantity <= 0) {
+            throw new IllegalArgumentException(
+                    "Quantity must be greater than zero."
+            );
+        }
+
+        List<Book> books = storage.loadBooks();
+
+        for (Book book : books) {
+
+            if (book.getId() == bookId) {
+
+                if (book.getStockQuantity() < quantity) {
+                    throw new IllegalArgumentException(
+                            "Insufficient stock for book: " + book.getTitle()
+                    );
+                }
+
+                book.setStockQuantity(
+                        book.getStockQuantity() - quantity
+                );
+
+                storage.saveBooks(books);
+
+                return;
+            }
+        }
+
+        throw new IllegalArgumentException(
+                "Book with ID " + bookId + " was not found."
+        );
+    }
+
+    // 8. Restore book stock when an order is cancelled
+    public void restoreStock(int bookId, int quantity) {
+
+        if (quantity <= 0) {
+            throw new IllegalArgumentException(
+                    "Quantity must be greater than zero."
+            );
+        }
+
+        List<Book> books = storage.loadBooks();
+
+        for (Book book : books) {
+
+            if (book.getId() == bookId) {
+
+                book.setStockQuantity(
+                        book.getStockQuantity() + quantity
+                );
+
+                storage.saveBooks(books);
+
+                return;
+            }
+        }
+
+        throw new IllegalArgumentException(
+                "Book with ID " + bookId + " was not found."
+        );
+    }
 }
