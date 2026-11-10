@@ -5,13 +5,14 @@ import java.math.BigDecimal;
 
 public class Book {
 
-    private int id;
+
     private String title;
     private String author;
     private String isbn;
     private BigDecimal price;
-    private int stockQuantity;
-    private int pages;
+    private Integer id;
+    private Integer stockQuantity;
+    private Integer pages;
     private String publisher;
     private String genre;
     private String language;
@@ -57,11 +58,11 @@ public class Book {
         return  language;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -97,17 +98,19 @@ public class Book {
         this.price = price;
     }
 
-    public int getStockQuantity() {
+    public Integer getStockQuantity() {
         return stockQuantity;
     }
 
-    public void setStockQuantity(int stockQuantity) {
+    public void setStockQuantity(Integer stockQuantity) {
         this.stockQuantity = stockQuantity;
     }
-    public void setPages(int pages){
+
+    public void setPages(Integer pages) {
         this.pages = pages;
     }
-    public int getPages(){
+
+    public Integer getPages() {
         return pages;
     }
 }
