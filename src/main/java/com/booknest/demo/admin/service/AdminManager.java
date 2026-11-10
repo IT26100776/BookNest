@@ -2,19 +2,25 @@ package com.booknest.demo.admin.service;
 
 import com.booknest.demo.admin.model.AdminUser;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AdminManager {
     //Attributes
     private static final String FILE_PATH = "admins.txt";
-    private List<AdminUser> adminList;
+    private final List<AdminUser> adminList;
+    private final PasswordEncoder passwordEncoder;
 
     //Constructor
-    public AdminManager() {
+    public AdminManager(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
         this.adminList = new ArrayList<>();
         loadAdminsFromFile();
     }
@@ -25,11 +31,6 @@ public class AdminManager {
         File file = new File(FILE_PATH);
 
         if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                System.out.println("Error creating file: " + e.getMessage());
-            }
             return;
         }
 
@@ -94,33 +95,40 @@ public class AdminManager {
 
     //Add new admin
     public boolean addAdmin(AdminUser newAdmin) {
-        if (newAdmin == null) {
-            System.out.println("Error: Admin details are required!");
+        if (newAdmin == null
+                || !isValidField(newAdmin.getUserId())
+                || !isValidField(newAdmin.getUsername())
+                || !isValidField(newAdmin.getEmail())
+                || !isValidField(newAdmin.getAdminLevel())
+                || !isValidField(newAdmin.getPermissions())) {
             return false;
         }
 
-        if (!isValidField(newAdmin.getUserId()) ||
-                !isValidField(newAdmin.getUsername()) ||
-                !isValidField(newAdmin.getPassword()) ||
-                !isValidField(newAdmin.getEmail()) ||
-                !isValidField(newAdmin.getAdminLevel()) ||
-                !isValidField(newAdmin.getPermissions())) {
-            System.out.println("Error: Fill in all admin fields without commas or line breaks!");
+        String rawPassword = newAdmin.getPassword();
+        if (rawPassword == null || rawPassword.isBlank()
+                || rawPassword.getBytes(StandardCharsets.UTF_8).length > 72
+                || rawPassword.indexOf(0) >= 0) {
             return false;
         }
 
-        for (AdminUser admin : adminList) {
-            if (admin.getUserId().equalsIgnoreCase(newAdmin.getUserId()) ||
-                    admin.getUsername().equalsIgnoreCase(newAdmin.getUsername())) {
-                System.out.println("Error: Admin ID or Username already exists!");
-                return false;
-            }
+        String userId = newAdmin.getUserId().trim();
+        String username = newAdmin.getUsername().trim();
+        if (getAdminById(userId) != null || findByUsername(username) != null) {
+            return false;
         }
 
-        adminList.add(newAdmin);
+        String role = newAdmin.getAdminLevel().trim();
+        if (!"ADMIN".equalsIgnoreCase(role) && !"SUPER_ADMIN".equalsIgnoreCase(role)) {
+            return false;
+        }
+
+        AdminUser storedAdmin = new AdminUser(
+                userId, username, passwordEncoder.encode(rawPassword),
+                newAdmin.getEmail().trim(), role, newAdmin.getPermissions().trim());
+
+        adminList.add(storedAdmin);
         if (!saveAdminsToFile()) {
-            //Remove the new admin if saving fails
-            adminList.remove(newAdmin);
+            adminList.remove(storedAdmin);
             return false;
         }
         return true;
@@ -221,7 +229,21 @@ public class AdminManager {
 
     //Get all admins
     public List<AdminUser> getAllAdmins() {
-        return adminList;
+        return List.copyOf(adminList);
+    }
+
+    //Find an admin by username
+    public AdminUser findByUsername(String username) {
+        if (!isValidField(username)) {
+            return null;
+        }
+
+        for (AdminUser admin : adminList) {
+            if (admin.getUsername().equalsIgnoreCase(username.trim())) {
+                return admin;
+            }
+        }
+        return null;
     }
 
     //Find admin by ID
