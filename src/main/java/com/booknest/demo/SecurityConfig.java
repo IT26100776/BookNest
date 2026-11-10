@@ -24,6 +24,12 @@ public class SecurityConfig {
                         // Public review access
                         .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/reviews").permitAll()
+                        .requestMatchers(
+                                "/api/books",
+                                "/api/books/**",
+                                "/api/orders",
+                                "/api/orders/**"
+                        ).permitAll()
 
                         // Other operations require authentication
                         .anyRequest().authenticated()
