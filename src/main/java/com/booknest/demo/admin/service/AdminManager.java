@@ -1,6 +1,6 @@
-package com.bookstore.service;
+package com.booknest.demo.admin.service;
 
-import com.bookstore.model.AdminUser;
+import com.booknest.demo.admin.model.AdminUser;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
