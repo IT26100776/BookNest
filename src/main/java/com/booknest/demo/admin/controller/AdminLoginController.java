@@ -15,6 +15,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +40,12 @@ public class AdminLoginController {
     public Map<String, String> currentAdmin(Principal principal) {
         //Get the username from the session
         return Map.of("username", principal.getName());
+    }
+
+    @GetMapping("/admins/csrf")
+    public Map<String, String> adminCsrfToken(CsrfToken csrfToken) {
+        // Give the admin page the token it needs for write requests.
+        return Map.of("headerName", csrfToken.getHeaderName(), "token", csrfToken.getToken());
     }
 
     @GetMapping("/admins")

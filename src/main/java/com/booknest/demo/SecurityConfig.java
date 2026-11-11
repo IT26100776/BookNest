@@ -35,9 +35,10 @@ public class SecurityConfig {
             throws Exception {
         http.addFilterBefore(new AdminSessionFilter(adminManager), AuthorizationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/admin/admins", "/api/admin/admins/**")
+                        .requestMatchers("/admin/accounts.html", "/admin/accounts.js",
+                                "/api/admin/admins", "/api/admin/admins/**")
                         .hasRole("SUPER_ADMIN")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/dashboard.html", "/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/books", "/api/books/**")
                         .permitAll()
                         .requestMatchers("/api/books", "/api/books/**").hasRole("ADMIN")
