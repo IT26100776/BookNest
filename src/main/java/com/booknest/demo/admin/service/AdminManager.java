@@ -1,11 +1,10 @@
 package com.booknest.demo.admin.service;
 
 import com.booknest.demo.admin.model.AdminUser;
-import java.io.*;
+import com.booknest.demo.admin.repository.AdminFileRepository;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,82 +42,35 @@ public class AdminManager {
     }
 
     //Attributes
-    private static final String FILE_PATH = "admins.txt";
+    private final AdminFileRepository repository;
     private final List<AdminUser> adminList;
     private final PasswordEncoder passwordEncoder;
 
     //Constructor
-    public AdminManager(PasswordEncoder passwordEncoder) {
+    public AdminManager(AdminFileRepository repository, PasswordEncoder passwordEncoder) {
+        this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.adminList = new ArrayList<>();
         loadAdminsFromFile();
     }
 
-    //Load admins from text file
     public synchronized void loadAdminsFromFile() {
-        adminList.clear();
-        File file = new File(FILE_PATH);
-
-        if (!file.exists()) {
-            return;
-        }
-
-        BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(file));
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                if (!line.trim().isEmpty()) {
-                    AdminUser admin = AdminUser.fromFileString(line);
-                    if (admin != null) {
-                        adminList.add(admin);
-                    }
-                }
-            }
+            List<AdminUser> loadedAdmins = repository.loadAll();
+            adminList.clear();
+            adminList.addAll(loadedAdmins);
         } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-                System.out.println("Error closing reader: " + e.getMessage());
-            }
+            throw new UncheckedIOException("Could not load admin accounts", e);
         }
     }
 
-    //Save admins to txt
     private boolean saveAdminsToFile() {
-        Path temporaryFile = null;
         try {
-            Path adminFile = Path.of(FILE_PATH).toAbsolutePath();
-            temporaryFile = Files.createTempFile(adminFile.getParent(), "admins-", ".tmp");
-
-            //Write admin to the temporary file
-            try (BufferedWriter writer = Files.newBufferedWriter(temporaryFile)) {
-                for (AdminUser admin : adminList) {
-                    writer.write(admin.toFileString());
-                    writer.newLine();
-                }
-            }
-
-            Files.move(temporaryFile, adminFile,
-                    StandardCopyOption.REPLACE_EXISTING,
-                    StandardCopyOption.ATOMIC_MOVE);
+            repository.saveAll(adminList);
             return true;
         } catch (IOException e) {
-            System.out.println("Error writing file: " + e.getMessage());
+            System.out.println("Error writing admin file: " + e.getMessage());
             return false;
-        } finally {
-            try {
-                if (temporaryFile != null) {
-                    Files.deleteIfExists(temporaryFile);
-                }
-            } catch (IOException e) {
-                System.out.println("Error removing temporary file: " + e.getMessage());
-            }
         }
     }
 
