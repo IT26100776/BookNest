@@ -13,6 +13,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdminManager {
+
+    public enum AddAdminResult {
+        CREATED,
+        DUPLICATE,
+        INVALID_INPUT,
+        SAVE_FAILED
+    }
     //Attributes
     private static final String FILE_PATH = "admins.txt";
     private final List<AdminUser> adminList;
@@ -26,7 +33,7 @@ public class AdminManager {
     }
 
     //Load admins from text file
-    public void loadAdminsFromFile() {
+    public synchronized void loadAdminsFromFile() {
         adminList.clear();
         File file = new File(FILE_PATH);
 
@@ -94,32 +101,32 @@ public class AdminManager {
     }
 
     //Add new admin
-    public boolean addAdmin(AdminUser newAdmin) {
+    public synchronized AddAdminResult addAdmin(AdminUser newAdmin) {
         if (newAdmin == null
                 || !isValidField(newAdmin.getUserId())
                 || !isValidField(newAdmin.getUsername())
                 || !isValidField(newAdmin.getEmail())
                 || !isValidField(newAdmin.getAdminLevel())
                 || !isValidField(newAdmin.getPermissions())) {
-            return false;
+            return AddAdminResult.INVALID_INPUT;
         }
 
         String rawPassword = newAdmin.getPassword();
         if (rawPassword == null || rawPassword.isBlank()
                 || rawPassword.getBytes(StandardCharsets.UTF_8).length > 72
                 || rawPassword.indexOf(0) >= 0) {
-            return false;
+            return AddAdminResult.INVALID_INPUT;
         }
 
         String userId = newAdmin.getUserId().trim();
         String username = newAdmin.getUsername().trim();
         if (getAdminById(userId) != null || findByUsername(username) != null) {
-            return false;
+            return AddAdminResult.DUPLICATE;
         }
 
         String role = newAdmin.getAdminLevel().trim();
         if (!"ADMIN".equalsIgnoreCase(role) && !"SUPER_ADMIN".equalsIgnoreCase(role)) {
-            return false;
+            return AddAdminResult.INVALID_INPUT;
         }
 
         AdminUser storedAdmin = new AdminUser(
@@ -129,13 +136,13 @@ public class AdminManager {
         adminList.add(storedAdmin);
         if (!saveAdminsToFile()) {
             adminList.remove(storedAdmin);
-            return false;
+            return AddAdminResult.SAVE_FAILED;
         }
-        return true;
+        return AddAdminResult.CREATED;
     }
 
-    public boolean updateAdmin(String userId, String username, String email,
-                               String adminLevel, String permissions) {
+    public synchronized boolean updateAdmin(String userId, String username, String email,
+                                            String adminLevel, String permissions) {
         if (!isValidField(userId) || !isValidField(username) || !isValidField(email)
                 || !isValidField(adminLevel) || !isValidField(permissions)) {
             System.out.println("Error: Fill in all admin fields without commas or line breaks!");
@@ -171,7 +178,7 @@ public class AdminManager {
         return true;
     }
 
-    public boolean deleteAdmin(String userId, String signedInAdminId) {
+    public synchronized boolean deleteAdmin(String userId, String signedInAdminId) {
         if (!isValidField(userId) || !isValidField(signedInAdminId)) {
             System.out.println("Error: Both admin IDs are required!");
             return false;
@@ -228,12 +235,12 @@ public class AdminManager {
     }
 
     //Get all admins
-    public List<AdminUser> getAllAdmins() {
+    public synchronized List<AdminUser> getAllAdmins() {
         return List.copyOf(adminList);
     }
 
     //Find an admin by username
-    public AdminUser findByUsername(String username) {
+    public synchronized AdminUser findByUsername(String username) {
         if (!isValidField(username)) {
             return null;
         }
@@ -247,7 +254,7 @@ public class AdminManager {
     }
 
     //Find admin by ID
-    public AdminUser getAdminById(String userId) {
+    public synchronized AdminUser getAdminById(String userId) {
         for (AdminUser admin : adminList) {
             if (admin.getUserId().equalsIgnoreCase(userId)) {
                 return admin;

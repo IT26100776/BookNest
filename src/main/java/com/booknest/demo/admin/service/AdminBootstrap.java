@@ -1,6 +1,7 @@
 package com.booknest.demo.admin.service;
 
 import com.booknest.demo.admin.model.AdminUser;
+import com.booknest.demo.admin.service.AdminManager.AddAdminResult;
 import java.io.Console;
 import java.util.Arrays;
 import java.util.UUID;
@@ -44,8 +45,9 @@ public class AdminBootstrap implements ApplicationRunner {
                     UUID.randomUUID().toString(), username, new String(password),
                     email, "SUPER_ADMIN", "ALL");
             //Hashes the password before saving the account
-            if (!adminManager.addAdmin(admin)) {
-                throw new IllegalStateException("The super admin could not be saved.");
+            AddAdminResult result = adminManager.addAdmin(admin);
+            if (result != AddAdminResult.CREATED) {
+                throw new IllegalStateException("Could not create the super admin: " + result);
             }
             console.printf("Super admin created.%n");
         } finally {
