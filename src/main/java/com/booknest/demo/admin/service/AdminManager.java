@@ -103,7 +103,7 @@ public class AdminManager {
             return AddAdminResult.INVALID_INPUT;
         }
 
-        AdminUser storedAdmin = new AdminUser(
+        AdminUser storedAdmin = AdminUser.fromRole(
                 userId, username, passwordEncoder.encode(rawPassword),
                 newAdmin.getEmail().trim(), role, newAdmin.getPermissions().trim());
 
@@ -145,7 +145,7 @@ public class AdminManager {
         }
 
         // Keep the existing ID and password hash when editing an account.
-        AdminUser updatedAdmin = new AdminUser(currentAdmin.getUserId(), updatedUsername,
+        AdminUser updatedAdmin = AdminUser.fromRole(currentAdmin.getUserId(), updatedUsername,
                 currentAdmin.getPassword(), email.trim(), role, permissions.trim());
         int index = adminList.indexOf(currentAdmin);
         adminList.set(index, updatedAdmin);
