@@ -43,7 +43,8 @@ public class AdminUser extends User {
 
     //Convert object to text for admins.txt
     public String toFileString() {
-        return userId + "," + username + "," + password + "," + email + "," + adminLevel + "," + permissions;
+        return getUserId() + "," + getUsername() + "," + getPassword() + ","
+                + getEmail() + "," + adminLevel + "," + permissions;
     }
 
     //Create object from text read from admins.txt
