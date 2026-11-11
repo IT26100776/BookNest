@@ -20,6 +20,18 @@ public class AdminManager {
         INVALID_INPUT,
         SAVE_FAILED
     }
+    public enum UpdateAdminStatus {
+        UPDATED,
+        NOT_FOUND,
+        DUPLICATE,
+        INVALID_INPUT,
+        LAST_SUPER_ADMIN,
+        SAVE_FAILED
+    }
+
+    public record UpdateAdminResult(UpdateAdminStatus status, AdminUser admin) {
+    }
+
     //Attributes
     private static final String FILE_PATH = "admins.txt";
     private final List<AdminUser> adminList;
@@ -141,41 +153,47 @@ public class AdminManager {
         return AddAdminResult.CREATED;
     }
 
-    public synchronized boolean updateAdmin(String userId, String username, String email,
-                                            String adminLevel, String permissions) {
+    public synchronized UpdateAdminResult updateAdmin(
+            String userId, String username, String email, String adminLevel, String permissions) {
         if (!isValidField(userId) || !isValidField(username) || !isValidField(email)
                 || !isValidField(adminLevel) || !isValidField(permissions)) {
-            System.out.println("Error: Fill in all admin fields without commas or line breaks!");
-            return false;
+            return new UpdateAdminResult(UpdateAdminStatus.INVALID_INPUT, null);
+        }
+
+        String role = adminLevel.trim();
+        if (!"ADMIN".equalsIgnoreCase(role) && !"SUPER_ADMIN".equalsIgnoreCase(role)) {
+            return new UpdateAdminResult(UpdateAdminStatus.INVALID_INPUT, null);
         }
 
         AdminUser currentAdmin = getAdminById(userId.trim());
         if (currentAdmin == null) {
-            System.out.println("Error: Admin not found!");
-            return false;
+            return new UpdateAdminResult(UpdateAdminStatus.NOT_FOUND, null);
         }
 
         String updatedUsername = username.trim();
-        for (AdminUser admin : adminList) {
-            if (admin != currentAdmin && admin.getUsername().trim().equalsIgnoreCase(updatedUsername)) {
-                System.out.println("Error: Username already exists!");
-                return false;
-            }
+        AdminUser accountWithUsername = findByUsername(updatedUsername);
+        if (accountWithUsername != null && accountWithUsername != currentAdmin) {
+            return new UpdateAdminResult(UpdateAdminStatus.DUPLICATE, null);
         }
 
-        //Keep the same ID and password
-        AdminUser updatedAdmin = new AdminUser(currentAdmin.getUserId(), updatedUsername,
-                currentAdmin.getPassword(), email.trim(), adminLevel.trim(), permissions.trim());
+        // Keep at least one super admin in the account store.
+        if (isSuperAdmin(currentAdmin) && !"SUPER_ADMIN".equalsIgnoreCase(role)
+                && adminList.stream().filter(this::isSuperAdmin).count() == 1) {
+            return new UpdateAdminResult(UpdateAdminStatus.LAST_SUPER_ADMIN, null);
+        }
 
+        // Keep the existing ID and password hash when editing an account.
+        AdminUser updatedAdmin = new AdminUser(currentAdmin.getUserId(), updatedUsername,
+                currentAdmin.getPassword(), email.trim(), role, permissions.trim());
         int index = adminList.indexOf(currentAdmin);
         adminList.set(index, updatedAdmin);
 
         if (!saveAdminsToFile()) {
-            //Keep the old details if saving fails
             adminList.set(index, currentAdmin);
-            return false;
+            return new UpdateAdminResult(UpdateAdminStatus.SAVE_FAILED, null);
         }
-        return true;
+
+        return new UpdateAdminResult(UpdateAdminStatus.UPDATED, updatedAdmin);
     }
 
     public synchronized boolean deleteAdmin(String userId, String signedInAdminId) {
