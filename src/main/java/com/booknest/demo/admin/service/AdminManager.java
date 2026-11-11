@@ -32,6 +32,16 @@ public class AdminManager {
     public record UpdateAdminResult(UpdateAdminStatus status, AdminUser admin) {
     }
 
+    public enum DeleteAdminResult {
+        DELETED,
+        NOT_FOUND,
+        INVALID_INPUT,
+        FORBIDDEN,
+        SELF_DELETE,
+        LAST_SUPER_ADMIN,
+        SAVE_FAILED
+    }
+
     //Attributes
     private static final String FILE_PATH = "admins.txt";
     private final List<AdminUser> adminList;
@@ -196,46 +206,41 @@ public class AdminManager {
         return new UpdateAdminResult(UpdateAdminStatus.UPDATED, updatedAdmin);
     }
 
-    public synchronized boolean deleteAdmin(String userId, String signedInAdminId) {
-        if (!isValidField(userId) || !isValidField(signedInAdminId)) {
-            System.out.println("Error: Both admin IDs are required!");
-            return false;
+    public synchronized DeleteAdminResult deleteAdmin(String userId, String signedInAdminId) {
+        if (!isValidField(userId)) {
+            return DeleteAdminResult.INVALID_INPUT;
+        }
+
+        AdminUser signedInAdmin = getAdminById(signedInAdminId);
+        if (signedInAdmin == null || !isSuperAdmin(signedInAdmin)) {
+            return DeleteAdminResult.FORBIDDEN;
         }
 
         AdminUser adminToDelete = getAdminById(userId.trim());
         if (adminToDelete == null) {
-            System.out.println("Error: Admin not found!");
-            return false;
+            return DeleteAdminResult.NOT_FOUND;
         }
 
-        if (adminToDelete.getUserId().trim().equalsIgnoreCase(signedInAdminId.trim())) {
-            System.out.println("Error: You cannot delete your own account!");
-            return false;
+        // Use the account ID so a username change cannot bypass this check.
+        if (adminToDelete == signedInAdmin) {
+            return DeleteAdminResult.SELF_DELETE;
         }
 
-        if (isSuperAdmin(adminToDelete)) {
-            int superAdminCount = 0;
-            for (AdminUser admin : adminList) {
-                if (isSuperAdmin(admin)) {
-                    superAdminCount++;
-                }
-            }
-
-            if (superAdminCount == 1) {
-                System.out.println("Error: You cannot delete the last super admin!");
-                return false;
-            }
+        if (isSuperAdmin(adminToDelete)
+                && adminList.stream().filter(this::isSuperAdmin).count() == 1) {
+            return DeleteAdminResult.LAST_SUPER_ADMIN;
         }
 
         int index = adminList.indexOf(adminToDelete);
         adminList.remove(index);
 
         if (!saveAdminsToFile()) {
-            //Add the admin back if saving fails
+            // Restore the account in memory if the file could not be saved.
             adminList.add(index, adminToDelete);
-            return false;
+            return DeleteAdminResult.SAVE_FAILED;
         }
-        return true;
+
+        return DeleteAdminResult.DELETED;
     }
 
     private boolean isSuperAdmin(AdminUser admin) {
