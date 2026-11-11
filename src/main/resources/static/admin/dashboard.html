@@ -3,65 +3,55 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin dashboard | BookNest</title>
-    <style>
-        :root {
-            font-family: Inter, system-ui, sans-serif;
-            color: #172525;
-            background: #f5f7f6;
-            color-scheme: light;
-        }
-
-        body { margin: 0; }
-        header { background: #153633; color: white; }
-        header div, main { max-width: 65rem; margin: auto; padding: 1rem 1.5rem; }
-        header div { display: flex; justify-content: space-between; align-items: center; }
-        header a { color: white; }
-        main { padding-top: 2.5rem; }
-        h1 { margin: 0 0 1.5rem; font-size: clamp(1.8rem, 4vw, 2.5rem); }
-        h2 { margin: 0; font-size: 1.25rem; }
-        .features { display: flex; flex-wrap: wrap; gap: 1rem; }
-        .feature {
-            flex: 1 1 16rem;
-            max-width: 31rem;
-            padding: 1.5rem;
-            border: 1px solid #d9e3df;
-            border-radius: .75rem;
-            background: white;
-        }
-        .feature p { margin: .5rem 0 1rem; line-height: 1.5; }
-        .feature a {
-            display: inline-block;
-            padding: .6rem .9rem;
-            border-radius: .4rem;
-            background: #17634f;
-            color: white;
-            text-decoration: none;
-        }
-        .feature a:hover { background: #114a3c; }
-    </style>
+    <title>Dashboard | BookNest Admin</title>
+    <link rel="stylesheet" href="vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-<header>
-    <div>
-        <strong>BookNest</strong>
-        <a href="/logout">Sign out</a>
-    </div>
-</header>
-<main>
-    <h1>Admin dashboard</h1>
-    <div class="features">
-        <section class="feature" aria-labelledby="accounts-heading">
-            <h2 id="accounts-heading">Admin accounts</h2>
-            <p>Super admins can add, edit, and remove admin accounts.</p>
-            <a href="accounts.html">Manage admin accounts</a>
-        </section>
-        <section class="feature" aria-labelledby="activity-heading">
-            <h2 id="activity-heading">Activity logs</h2>
-            <p>See who added, edited, or deleted an admin account.</p>
-            <a href="activity.html">View activity logs</a>
-        </section>
-    </div>
-</main>
+<a class="visually-hidden-focusable skip-link" href="#main-content">Skip to content</a>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <a class="brand" href="dashboard.html">
+            <span class="brand-mark" aria-hidden="true">B</span>
+            <span>BookNest <small>Administration</small></span>
+        </a>
+        <nav class="nav admin-nav" aria-label="Admin navigation">
+            <a class="nav-link active" aria-current="page" href="dashboard.html">Dashboard</a>
+            <a class="nav-link" href="accounts.html">Admin accounts</a>
+            <a class="nav-link" href="activity.html">Activity logs</a>
+        </nav>
+    </aside>
+    <header class="admin-topbar">
+        <a class="btn btn-outline-secondary btn-sm" href="/logout">Sign out</a>
+    </header>
+    <main class="admin-main" id="main-content">
+        <div class="page-heading">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Manage administrator access and review account changes.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <section class="col-lg-6" aria-labelledby="accounts-heading">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h2 id="accounts-heading">Admin accounts</h2>
+                        <p>View accounts, update roles, and add or remove administrators.</p>
+                        <a class="btn btn-primary" href="accounts.html">Manage admin accounts</a>
+                    </div>
+                </div>
+            </section>
+            <section class="col-lg-6" aria-labelledby="activity-heading">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h2 id="activity-heading">Activity logs</h2>
+                        <p>See who created, edited, or deleted an admin account.</p>
+                        <a class="btn btn-outline-secondary" href="activity.html">View activity logs</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
 </body>
 </html>
