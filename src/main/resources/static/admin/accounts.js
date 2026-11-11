@@ -13,7 +13,11 @@ const passwordInput = form.elements.namedItem("password");
 const saveButton = document.querySelector("#save-admin");
 const cancelButton = document.querySelector("#cancel-edit");
 
+const deleteDialog = document.querySelector("#delete-dialog");
+const deleteMessage = document.querySelector("#delete-message");
+
 let editingAccount = null;
+let pendingDeletion = null;
 
 function setStatus(message, isError = false) {
     statusMessage.textContent = message;
@@ -45,14 +49,18 @@ function accountRow(account) {
     row.insertCell().textContent = account.username;
     row.insertCell().textContent = account.email;
     const role = row.insertCell();
-    role.textContent = account.adminLevel === "SUPER_ADMIN" ? "Super admin" : "Admin";
-    role.className = "role";
+    const isSuperAdmin = account.adminLevel === "SUPER_ADMIN";
+    const roleBadge = document.createElement("span");
+    roleBadge.textContent = isSuperAdmin ? "Super admin" : "Admin";
+    roleBadge.className = isSuperAdmin ? "badge badge-soft badge-super" : "badge badge-soft";
+    role.append(roleBadge);
 
     const actions = document.createElement("div");
     actions.className = "actions";
     const edit = actionButton("Edit", () => openForm(account));
-    const remove = actionButton("Delete", () => deleteAccount(account, remove));
-    remove.className = "danger";
+    edit.classList.add("btn-outline-secondary");
+    const remove = actionButton("Delete", () => openDeleteDialog(account, remove));
+    remove.classList.add("btn-outline-danger");
     actions.append(edit, remove);
     row.insertCell().append(actions);
     return row;
@@ -61,6 +69,7 @@ function accountRow(account) {
 function actionButton(label, handler) {
     const button = document.createElement("button");
     button.type = "button";
+    button.className = "btn btn-sm";
     button.textContent = label;
     button.addEventListener("click", handler);
     return button;
@@ -150,9 +159,14 @@ async function saveAccount(event) {
     }
 }
 
-async function deleteAccount(account, button) {
-    if (!window.confirm(`Delete the account for ${account.username}?`)) return;
+function openDeleteDialog(account, button) {
+    pendingDeletion = { account, button };
+    deleteMessage.textContent = `${account.username} will no longer be able to sign in.`;
+    deleteDialog.returnValue = "";
+    deleteDialog.showModal();
+}
 
+async function deleteAccount(account, button) {
     button.disabled = true;
     try {
         const response = await writeAccount(
@@ -173,5 +187,12 @@ dialog.addEventListener("cancel", event => {
 });
 dialog.addEventListener("close", () => form.reset());
 form.addEventListener("submit", saveAccount);
+deleteDialog.addEventListener("close", () => {
+    const selection = pendingDeletion;
+    pendingDeletion = null;
+    if (selection && deleteDialog.returnValue === "delete") {
+        deleteAccount(selection.account, selection.button);
+    }
+});
 
 loadAccounts().catch(error => setStatus(error.message, true));
