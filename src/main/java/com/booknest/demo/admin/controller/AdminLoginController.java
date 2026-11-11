@@ -3,11 +3,15 @@ package com.booknest.demo.admin.controller;
 import com.booknest.demo.admin.dto.AdminCreateRequest;
 import com.booknest.demo.admin.dto.AdminResponse;
 import com.booknest.demo.admin.dto.AdminUpdateRequest;
+import com.booknest.demo.admin.model.AdminActivity;
+import com.booknest.demo.admin.model.AdminActivity.Action;
 import com.booknest.demo.admin.model.AdminUser;
+import com.booknest.demo.admin.service.AdminActivityService;
 import com.booknest.demo.admin.service.AdminManager;
 import com.booknest.demo.admin.service.AdminManager.UpdateAdminResult;
 import com.booknest.demo.admin.service.AdminUserDetailsService.AdminPrincipal;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +35,16 @@ import org.springframework.web.server.ResponseStatusException;
 public class AdminLoginController {
 
     private final AdminManager adminManager;
+    private final AdminActivityService activityService;
 
-    public AdminLoginController(AdminManager adminManager) {
+    public AdminLoginController(AdminManager adminManager, AdminActivityService activityService) {
         this.adminManager = adminManager;
+        this.activityService = activityService;
+    }
+
+    @GetMapping("/activity")
+    public List<AdminActivity> recentActivity() throws IOException {
+        return activityService.findRecent();
     }
 
     @GetMapping("/me")
@@ -57,7 +68,7 @@ public class AdminLoginController {
 
     @PostMapping("/admins")
     public ResponseEntity<AdminResponse> createAdmin(
-            @Valid @RequestBody AdminCreateRequest request) {
+            @Valid @RequestBody AdminCreateRequest request, Principal principal) {
         String role = request.adminLevel();
         String userId = UUID.randomUUID().toString();
 
@@ -67,9 +78,12 @@ public class AdminLoginController {
                 request.email(), role, permissions);
 
         return switch (adminManager.addAdmin(newAdmin)) {
-            case CREATED -> ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new AdminResponse(userId, request.username().trim(),
-                            request.email().trim(), role));
+            case CREATED -> {
+                activityService.record(Action.CREATED, principal.getName(), userId);
+                yield ResponseEntity.status(HttpStatus.CREATED)
+                        .body(new AdminResponse(userId, request.username().trim(),
+                                request.email().trim(), role));
+            }
             case DUPLICATE -> throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "An admin with this username or ID already exists.");
             case INVALID_INPUT -> throw new ResponseStatusException(
@@ -81,13 +95,17 @@ public class AdminLoginController {
 
     @PutMapping("/admins/{userId}")
     public AdminResponse updateAdmin(
-            @PathVariable String userId, @Valid @RequestBody AdminUpdateRequest request) {
+            @PathVariable String userId, @Valid @RequestBody AdminUpdateRequest request,
+            Principal principal) {
         String role = request.adminLevel();
         UpdateAdminResult result = adminManager.updateAdmin(userId, request.username(),
                 request.email(), role, permissionsForRole(role));
 
         return switch (result.status()) {
-            case UPDATED -> toResponse(result.admin());
+            case UPDATED -> {
+                activityService.record(Action.UPDATED, principal.getName(), result.admin().getUserId());
+                yield toResponse(result.admin());
+            }
             case NOT_FOUND -> throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Admin account not found.");
             case DUPLICATE -> throw new ResponseStatusException(
@@ -109,7 +127,10 @@ public class AdminLoginController {
         }
 
         return switch (adminManager.deleteAdmin(userId, signedInAdmin.getUserId())) {
-            case DELETED -> ResponseEntity.noContent().build();
+            case DELETED -> {
+                activityService.record(Action.DELETED, signedInAdmin.getUsername(), userId.trim());
+                yield ResponseEntity.noContent().build();
+            }
             case NOT_FOUND -> throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Admin account not found.");
             case INVALID_INPUT -> throw new ResponseStatusException(

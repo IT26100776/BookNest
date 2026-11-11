@@ -36,7 +36,8 @@ public class SecurityConfig {
         http.addFilterBefore(new AdminSessionFilter(adminManager), AuthorizationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/accounts.html", "/admin/accounts.js",
-                                "/api/admin/admins", "/api/admin/admins/**")
+                                "/admin/activity.html", "/admin/activity.js",
+                                "/api/admin/activity", "/api/admin/admins", "/api/admin/admins/**")
                         .hasRole("SUPER_ADMIN")
                         .requestMatchers("/admin/dashboard.html", "/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/books", "/api/books/**")
