@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Activity logs | BookNest</title>
+    <script src="activity.js" defer></script>
+    <style>
+        :root {
+            font-family: Inter, system-ui, sans-serif;
+            color: #172525;
+            background: #f5f7f6;
+        }
+
+        body { margin: 0; }
+        header { background: #153633; color: white; }
+        header div, main { max-width: 65rem; margin: auto; padding: 1rem 1.5rem; }
+        header div, nav, .heading { display: flex; align-items: center; gap: 1rem; }
+        header div, .heading { justify-content: space-between; flex-wrap: wrap; }
+        header a { color: white; }
+        main { padding-top: 2.5rem; }
+        h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.5rem); }
+        button {
+            font: inherit;
+            cursor: pointer;
+            padding: .5rem .75rem;
+            border: 1px solid #cad8d2;
+            border-radius: .4rem;
+            background: white;
+            color: #153633;
+        }
+        button:disabled { opacity: .55; cursor: default; }
+        #activity-status { min-height: 1.25rem; }
+        .error { color: #9c282c; }
+        .table-wrap {
+            overflow-x: auto;
+            background: white;
+            border: 1px solid #d9e3df;
+            border-radius: .75rem;
+        }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: .875rem 1rem; }
+        th { background: #eaf1ee; }
+        tbody tr + tr { border-top: 1px solid #e2e9e6; }
+        td { overflow-wrap: anywhere; }
+        .date, .action { white-space: nowrap; }
+    </style>
+</head>
+<body>
+<header>
+    <div>
+        <strong>BookNest</strong>
+        <nav aria-label="Admin navigation">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="accounts.html">Admin accounts</a>
+            <a href="/logout">Sign out</a>
+        </nav>
+    </div>
+</header>
+<main>
+    <div class="heading">
+        <h1>Activity logs</h1>
+        <button id="refresh-activity" type="button">Refresh</button>
+    </div>
+    <p id="activity-status" role="status" aria-live="polite">Loading activity…</p>
+    <div class="table-wrap">
+        <table aria-label="Admin account activity">
+            <thead>
+                <tr>
+                    <th scope="col">Date and time</th>
+                    <th scope="col">Action</th>
+                    <th scope="col">Performed by</th>
+                    <th scope="col">Account ID</th>
+                </tr>
+            </thead>
+            <tbody id="activity-rows"></tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>
