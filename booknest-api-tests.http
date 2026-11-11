@@ -1,0 +1,70 @@
+
+### 1. Get all books
+GET http://localhost:8080/api/books
+Accept: application/json
+
+###
+
+### 2. Get a specific book (replace 1 with an existing ID)
+GET http://localhost:8080/api/books/1
+Accept: application/json
+
+###
+
+### 3. Search for books
+GET http://localhost:8080/api/books/search?keyword=java
+Accept: application/json
+
+###
+
+### 4. Get all orders
+GET http://localhost:8080/api/orders
+Accept: application/json
+###
+
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "title": "Clean Code",
+  "author": "Robert C. Martin",
+  "isbn": "9780132350884",
+  "price": 4500.00,
+  "stockQuantity": 10,
+  "pages": 464,
+  "publisher": "Prentice Hall",
+  "genre": "Programming",
+  "language": "English"
+}
+###
+
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "title": "The Pragmatic Programmer",
+  "author": "David Thomas and Andrew Hunt",
+  "isbn": "9780135957059",
+  "price": 5200.00,
+  "stockQuantity": 8,
+  "pages": 352,
+  "publisher": "Addison-Wesley",
+  "genre": "Programming",
+  "language": "English"
+}
+###
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "title": "Introduction to Algorithms",
+  "author": "Thomas H. Cormen",
+  "isbn": "9780262046305",
+  "price": 8500.00,
+  "stockQuantity": 5,
+  "pages": 1312,
+  "publisher": "MIT Press",
+  "genre": "Computer Science",
+  "language": "English"
+}
+
