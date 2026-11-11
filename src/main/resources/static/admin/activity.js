@@ -16,8 +16,13 @@ function activityRow(entry) {
     date.textContent = dateFormat.format(new Date(entry.timestamp));
 
     const action = row.insertCell();
-    action.className = "action";
-    action.textContent = actionLabels[entry.action] || entry.action;
+    const badge = document.createElement("span");
+    badge.className = "badge badge-soft";
+    if (Object.hasOwn(actionLabels, entry.action)) {
+        badge.classList.add(`badge-${entry.action.toLowerCase()}`);
+    }
+    badge.textContent = actionLabels[entry.action] || entry.action;
+    action.append(badge);
 
     row.insertCell().textContent = entry.actor;
     row.insertCell().textContent = entry.accountId;
