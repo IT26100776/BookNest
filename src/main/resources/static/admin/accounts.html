@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin accounts | BookNest</title>
+    <script src="accounts.js" defer></script>
+    <style>
+        :root {
+            font-family: Inter, system-ui, sans-serif;
+            color: #172525;
+            background: #f5f7f6;
+            color-scheme: light;
+        }
+
+        body { margin: 0; }
+        header { background: #153633; color: white; }
+        header div, main { max-width: 65rem; margin: auto; padding: 1rem 1.5rem; }
+        header div, .heading, .actions { display: flex; align-items: center; gap: .75rem; }
+        header div, .heading { justify-content: space-between; flex-wrap: wrap; }
+        header a { color: white; }
+        nav { display: flex; gap: 1rem; }
+        main { padding-top: 2.5rem; }
+        h1, h2 { margin: 0; }
+        h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); }
+        .table-wrap {
+            overflow-x: auto;
+            background: white;
+            border: 1px solid #d9e3df;
+            border-radius: .75rem;
+        }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: .875rem 1rem; }
+        th { background: #eaf1ee; }
+        tbody tr + tr { border-top: 1px solid #e2e9e6; }
+        td { overflow-wrap: anywhere; }
+        .role { white-space: nowrap; }
+        button {
+            font: inherit;
+            cursor: pointer;
+            border: 1px solid #cad8d2;
+            border-radius: .4rem;
+            background: white;
+            color: #153633;
+            padding: .5rem .75rem;
+        }
+        button:disabled { opacity: .55; cursor: default; }
+        .primary { background: #17634f; border-color: #17634f; color: white; }
+        .danger { color: #9c282c; }
+        .error { color: #9c282c; }
+        #status { min-height: 1.25rem; }
+        dialog {
+            box-sizing: border-box;
+            width: min(28rem, calc(100vw - 2rem));
+            padding: 1.5rem;
+            border: 1px solid #d9e3df;
+            border-radius: .75rem;
+            color: inherit;
+        }
+        dialog::backdrop { background: #0b201cb0; }
+        label { display: grid; gap: .3rem; margin: 1rem 0; }
+        input, select {
+            font: inherit;
+            border: 1px solid #a8beb4;
+            border-radius: .35rem;
+            padding: .55rem;
+        }
+        [hidden] { display: none !important; }
+    </style>
+</head>
+<body>
+<header>
+    <div>
+        <strong>BookNest</strong>
+        <nav aria-label="Admin navigation">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="/logout">Sign out</a>
+        </nav>
+    </div>
+</header>
+<main>
+    <div class="heading">
+        <h1>Admin accounts</h1>
+        <button id="add-admin" class="primary" type="button" disabled>Add admin</button>
+    </div>
+
+    <p id="status" role="status" aria-live="polite">Loading accounts…</p>
+    <div class="table-wrap">
+        <table aria-label="Admin accounts">
+            <thead>
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="account-rows"></tbody>
+        </table>
+    </div>
+</main>
+
+<dialog id="account-dialog" aria-labelledby="dialog-title">
+    <h2 id="dialog-title">Add admin</h2>
+    <form id="account-form">
+        <label>Username
+            <input name="username" autocomplete="off" required>
+        </label>
+        <label>Email
+            <input name="email" type="email" required>
+        </label>
+        <label id="password-field">Password
+            <input name="password" type="password" autocomplete="new-password">
+        </label>
+        <label>Role
+            <select name="adminLevel">
+                <option value="ADMIN">Admin</option>
+                <option value="SUPER_ADMIN">Super admin</option>
+            </select>
+        </label>
+        <p id="form-error" class="error" role="alert" hidden></p>
+        <div class="actions">
+            <button id="save-admin" class="primary" type="submit">Save</button>
+            <button id="cancel-edit" type="button">Cancel</button>
+        </div>
+    </form>
+</dialog>
+</body>
+</html>
