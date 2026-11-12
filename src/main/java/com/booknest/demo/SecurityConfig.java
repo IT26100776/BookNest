@@ -33,6 +33,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Configuration
 public class SecurityConfig {
 
+    public static final String API_CSRF_TOKEN_ATTRIBUTE = "booknest.apiCsrfToken";
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AdminManager adminManager)
             throws Exception {
@@ -134,8 +136,8 @@ public class SecurityConfig {
 
             this.xor.handle(request, response, csrfToken);
 
-            // Force generation of the deferred token and cookie
-            csrfToken.get();
+            // API clients send the raw header token, while login forms use the masked token.
+            request.setAttribute(API_CSRF_TOKEN_ATTRIBUTE, csrfToken.get());
         }
 
         @Override

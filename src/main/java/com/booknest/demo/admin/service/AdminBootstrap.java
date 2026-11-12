@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+//Run only with the seed-admin profile
 @Profile("seed-admin")
 public class AdminBootstrap implements ApplicationRunner {
 
@@ -22,7 +23,7 @@ public class AdminBootstrap implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        //Create the admin only when the account file is empty
+        //Seed only when there are no accounts
         if (!adminManager.getAllAdmins().isEmpty()) {
             throw new IllegalStateException("The admin store already contains accounts.");
         }
@@ -44,7 +45,7 @@ public class AdminBootstrap implements ApplicationRunner {
             AdminUser admin = new AdminUser(
                     UUID.randomUUID().toString(), username, new String(password),
                     email, "SUPER_ADMIN", "ALL");
-            //Hashes the password before saving the account
+            //The manager hashes the password
             AddAdminResult result = adminManager.addAdmin(admin);
             if (result != AddAdminResult.CREATED) {
                 throw new IllegalStateException("Could not create the super admin: " + result);

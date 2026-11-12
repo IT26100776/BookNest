@@ -25,7 +25,7 @@ public class AdminActivityService {
         try {
             repository.append(new AdminActivity(Instant.now(), action, actor, accountId));
         } catch (IOException e) {
-            // The account change is already saved, so report the log error to the server.
+            //Warn if logging fails after the account is saved
             LOGGER.warn("Could not record admin account action {} for {}", action, accountId, e);
         }
     }

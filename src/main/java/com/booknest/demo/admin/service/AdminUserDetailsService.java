@@ -20,25 +20,25 @@ public class AdminUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        //Search the account using the username
         AdminUser admin = adminManager.findByUsername(username);
         if (admin == null || admin.getAdminLevel() == null) {
             throw new UsernameNotFoundException("Admin account unavailable");
         }
 
-        //Give the super admin access to regular admin routes
+        //Super admins also get the admin role
         String[] roles = switch (admin.getAdminLevel().trim().toUpperCase(Locale.ROOT)) {
             case "ADMIN" -> new String[] {"ROLE_ADMIN"};
             case "SUPER_ADMIN" -> new String[] {"ROLE_ADMIN", "ROLE_SUPER_ADMIN"};
             default -> throw new UsernameNotFoundException("Admin account unavailable");
         };
 
-        //Spring security uses the stored hash to check the password
+        //Spring Security checks the stored password hash
         return new AdminPrincipal(admin, roles);
     }
 
     public static final class AdminPrincipal extends User {
 
+        //Use the account ID even after a rename
         private final String userId;
 
         private AdminPrincipal(AdminUser admin, String[] roles) {
