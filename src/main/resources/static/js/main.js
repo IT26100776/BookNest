@@ -189,6 +189,36 @@
 
     }
   }
+	
+	async function loadBookRatings() {
+    try {
+        const response = await fetch('/api/reviews');
+    if (!response.ok) {
+        throw new Error('Could not load book ratings.');
+    }
+
+    const reviews = await response.json();
+
+    BOOKS.forEach(book => {
+        const bookReviews = reviews.filter(
+            review =>
+                String(review.bookId).toLowerCase() ===
+                String(book.id).toLowerCase()
+        );
+
+        book.reviews = bookReviews.length;
+
+        book.rating = bookReviews.length
+            ? bookReviews.reduce(
+                (sum, review) => sum + Number(review.rating), 0
+            ) / bookReviews.length
+            : 0;
+    });
+
+} catch (error) {
+    console.error('Book rating loading error:', error);
+}
+}
 
 
   const REVIEWS = [
@@ -910,22 +940,93 @@ if (checkout) {
   /* ==========================================================================
      7. BOOK DETAIL PAGE (book.html?id=…)
      ========================================================================== */
-  function reviewsFor(book) {
-    const fits = (r) => (r.genres ? r.genres.includes(book.genre) : (r.all || book.genre !== 'kids'));
-    return REVIEWS.filter(fits)
-      .sort((a, b) => hash(book.id + a.name) - hash(book.id + b.name))
-      .slice(0, 4)
-      .sort((a, b) => b.date.localeCompare(a.date));
-  }
+  async function loadAndRenderReviews(root, book) {
+    const reviewList = $('[data-review-list]', root);
+    const reviewBars = $('[data-review-bars]', root);
+try {
+    const response = await fetch(
+        `/api/reviews/book/${encodeURIComponent(book.id)}`
+    );
 
-  function ratingSpread(book) {
-    const n = book.reviews;
-    const five = Math.round(n * Math.min(0.9, Math.max(0.25, (book.rating - 3.4) / 1.6)));
-    const four = Math.round((n - five) * 0.66);
-    const three = Math.round((n - five - four) * 0.6);
-    const two = Math.round((n - five - four - three) * 0.6);
-    return [five, four, three, two, n - five - four - three - two];
-  }
+    if (!response.ok) {
+        throw new Error('Could not load reviews.');
+    }
+
+    const reviews = await response.json();
+
+    const count = reviews.length;
+    const average = count
+        ? reviews.reduce((sum, review) => sum + Number(review.rating), 0) / count
+        : 0;
+	// Update the book's actual rating data
+book.rating = average;
+book.reviews (http://book.reviews/) = count;
+
+    // Update review summary
+    const ratingEl = $('[data-b="rating"]', root);
+    const countEl = $('[data-b="reviews"]', root);
+    const starsEl = $('[data-b="stars"]', root);
+
+    if (ratingEl) ratingEl.textContent = average.toFixed(1);
+    if (countEl) countEl.textContent = `${count} reviews`;
+    if (starsEl) starsEl.innerHTML = starsHTML(average);
+
+    // Update rating distribution
+    if (reviewBars) {
+        reviewBars.innerHTML = [5, 4, 3, 2, 1].map(star => {
+            const number = reviews.filter(
+                review => Number(review.rating) === star
+            ).length;
+
+            const percentage = count
+                ? (number / count) * 100
+                : 0;
+
+            return `
+                \<li>
+                    \<span class="bar-label">${star} star\</span>
+                    \<span class="bar">
+                        \<span style="width:${percentage}%">\</span>
+                    \</span>
+                    \<span class="bar-count">${number}\</span>
+                \</li>
+            `;
+        }).join('');
+    }
+
+    // Display reviews belonging to this book
+    if (reviewList) {
+        if (count === 0) {
+            reviewList.innerHTML =
+                '\<li class="review">No reviews yet. Be the first to review this book!\</li>';
+        } else {
+            reviewList.innerHTML = reviews.map(review => `
+                \<li class="review">
+                    \<div class="review-head">
+                        \<span class="avatar" aria-hidden="true">
+                            ${esc(initials(review.reviewerName))}
+                        \</span>
+                        \<div>
+                            \<p class="review-name">${esc(review.reviewerName)}\</p>
+                            \<p class="review-date">${esc(review.reviewType || 'Public Review')}\</p>
+                        \</div>
+                        ${starsHTML(Number(review.rating))}
+                    \</div>
+                    \<p class="review-text">${esc(review.comment)}\</p>
+                \</li>
+            `).join('');
+        }
+    }
+
+} catch (error) {
+    console.error('Review loading error:', error);
+
+    if (reviewList) {
+        reviewList.innerHTML =
+            '\<li class="review">Unable to load reviews at the moment.\</li>';
+    }
+}
+}
 
   function relatedFor(book) {
     const same = BOOKS.filter((b) => b.id !== book.id && b.genre === book.genre);
@@ -990,19 +1091,90 @@ if (checkout) {
     }
 
     // Reviews
-    const spread = ratingSpread(book);
-    $('[data-review-bars]', root).innerHTML = spread.map((n, i) => `
-      <li><span class="bar-label">${5 - i} star</span><span class="bar"><span style="width:${book.reviews ? (n / book.reviews) * 100 : 0}%"></span></span><span class="bar-count">${n}</span></li>`).join('');
-    $('[data-review-list]', root).innerHTML = reviewsFor(book).map((r) => `
-      <li class="review">
-        <div class="review-head">
-          <span class="avatar" aria-hidden="true">${initials(r.name)}</span>
-          <div><p class="review-name">${esc(r.name)}</p><p class="review-date">${longDate(r.date)}</p></div>
-          ${starsHTML(r.rating)}
-        </div>
-        <h3 class="review-title">${esc(r.title)}</h3>
-        <p class="review-text">${esc(r.text)}</p>
-      </li>`).join('');
+    async function loadAndRenderReviews(root, book) {
+    const reviewList = $('[data-review-list]', root);
+    const reviewBars = $('[data-review-bars]', root);
+try {
+    const response = await fetch(
+        `/api/reviews/book/${encodeURIComponent(book.id)}`
+    );
+
+    if (!response.ok) {
+        throw new Error('Could not load reviews.');
+    }
+
+    const reviews = await response.json();
+
+    const count = reviews.length;
+    const average = count
+        ? reviews.reduce((sum, review) => sum + Number(review.rating), 0) / count
+        : 0;
+
+    // Update review summary
+    const ratingEl = $('[data-b="rating"]', root);
+    const countEl = $('[data-b="reviews"]', root);
+    const starsEl = $('[data-b="stars"]', root);
+
+    if (ratingEl) ratingEl.textContent = average.toFixed(1);
+    if (countEl) countEl.textContent = `${count} reviews`;
+    if (starsEl) starsEl.innerHTML = starsHTML(average);
+
+    // Update rating distribution
+    if (reviewBars) {
+        reviewBars.innerHTML = [5, 4, 3, 2, 1].map(star => {
+            const number = reviews.filter(
+                review => Number(review.rating) === star
+            ).length;
+
+            const percentage = count
+                ? (number / count) * 100
+                : 0;
+
+            return `
+                \<li>
+                    \<span class="bar-label">${star} star\</span>
+                    \<span class="bar">
+                        \<span style="width:${percentage}%">\</span>
+                    \</span>
+                    \<span class="bar-count">${number}\</span>
+                \</li>
+            `;
+        }).join('');
+    }
+
+    // Display reviews belonging to this book
+    if (reviewList) {
+        if (count === 0) {
+            reviewList.innerHTML =
+                '\<li class="review">No reviews yet. Be the first to review this book!\</li>';
+        } else {
+            reviewList.innerHTML = reviews.map(review => `
+                \<li class="review">
+                    \<div class="review-head">
+                        \<span class="avatar" aria-hidden="true">
+                            ${esc(initials(review.reviewerName))}
+                        \</span>
+                        \<div>
+                            \<p class="review-name">${esc(review.reviewerName)}\</p>
+                            \<p class="review-date">${esc(review.reviewType || 'Public Review')}\</p>
+                        \</div>
+                        ${starsHTML(Number(review.rating))}
+                    \</div>
+                    \<p class="review-text">${esc(review.comment)}\</p>
+                \</li>
+            `).join('');
+        }
+    }
+
+} catch (error) {
+    console.error('Review loading error:', error);
+
+    if (reviewList) {
+        reviewList.innerHTML =
+            '\<li class="review">Unable to load reviews at the moment.\</li>';
+    }
+}
+}
 
     // Related shelf
     const related = $('[data-related]', root);
@@ -1021,6 +1193,101 @@ if (checkout) {
     const book = requested || bookById(root.dataset.bookPage);
     if (!book) return;
     if (book.id !== root.dataset.bookPage) renderBook(root, book);
+	  loadAndRenderReviews(root, book);
+	  
+	  // ==========
+// BOOKNEST REVIEW SUBMISSION
+// ==========
+const reviewForm = document.getElementById('reviewForm');
+const reviewMessage = document.getElementById('reviewMessage');
+function getReviewCsrfToken() {
+    const cookie = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('XSRF-TOKEN='));
+return cookie
+    ? decodeURIComponent(cookie.split('=').slice(1).join('='))
+    : null;
+}
+if (reviewForm) {
+    reviewForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+    const reviewerName =
+        document.getElementById('reviewerName').value.trim();
+
+    const rating =
+        Number(document.getElementById('reviewRating').value);
+
+    const comment =
+        document.getElementById('reviewComment').value.trim();
+
+    if (!reviewerName || !rating || !comment) {
+        reviewMessage.textContent = 'Please complete all fields.';
+        reviewMessage.className = 'text-danger mb-3';
+        return;
+    }
+
+    const submitButton = reviewForm.querySelector(
+        'button[type="submit"]'
+    );
+
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+
+    reviewMessage.textContent = '';
+
+    try {
+        const csrfToken = getReviewCsrfToken();
+
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        if (csrfToken) {
+            headers['X-XSRF-TOKEN'] = csrfToken;
+        }
+
+        const response = await fetch('/api/reviews', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+                bookId: String(book.id),
+                reviewerName: reviewerName,
+                rating: rating,
+                comment: comment
+            })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(
+                errorText || 'Unable to submit your review.'
+            );
+        }
+
+        reviewMessage.textContent =
+            'Your review has been submitted successfully!';
+
+        reviewMessage.className = 'text-success mb-3';
+
+        reviewForm.reset();
+
+        // Reload reviews and update the rating summary
+        await loadAndRenderReviews(root, book);
+
+    } catch (error) {
+        console.error('Review submission error:', error);
+
+        reviewMessage.textContent =
+            'Failed to submit review. ' + error.message;
+
+        reviewMessage.className = 'text-danger mb-3';
+
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit Review';
+    }
+});
+}
 
     const priceEl = $('[data-b="price"]', root);
     const stockEl = $('[data-b="stock"]', root);
@@ -1188,6 +1455,7 @@ announce(`${n} ${n === 1 ? 'copy' : 'copies'} of ${book.title}, ${FORMATS[f].toL
     try {
 
         await loadCustomerBooks();
+		await loadBookRatings();
 
         init();
 

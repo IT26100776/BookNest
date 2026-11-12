@@ -1,2 +1,2 @@
-1|Clean Code|Robert C. Martin|9780132350884|4500|15|464|Prentice Hall|Programming|English
+1|Clean Code|Robert C. Martin|9780132350884|4500|12|464|Prentice Hall|Programming|English
 2|The Alchemist|Paulo Coelho|9780061122415|2500|0|208|HarperOne|Fiction|English
