@@ -1,0 +1,2 @@
+e2ae2980-7169-42df-91e1-86513972833e,admin,$2a$10$tkPcjAiPOq9YxespraDa/..9dGpvLkJgJ7yBkU0kDtM.Kh4T7wRWm,admin@admin.com,SUPER_ADMIN,ALL
+bc21ef05-dd89-47c7-8c13-d2b8bc7c9d68,normaladmin,$2a$10$NDwhFQlxcUo7CmmiLs5tUuXtIJSrd6zn1sARrvEBG/24247aCU2xu,normaladmin@admin.com,ADMIN,BOOKS_ORDERS

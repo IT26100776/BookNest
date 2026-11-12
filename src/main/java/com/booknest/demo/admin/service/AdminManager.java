@@ -1,208 +1,198 @@
 package com.booknest.demo.admin.service;
 
 import com.booknest.demo.admin.model.AdminUser;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import com.booknest.demo.admin.repository.AdminFileRepository;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AdminManager {
+
+    public enum AddAdminResult {
+        CREATED,
+        DUPLICATE,
+        INVALID_INPUT,
+        SAVE_FAILED
+    }
+    public enum UpdateAdminStatus {
+        UPDATED,
+        NOT_FOUND,
+        DUPLICATE,
+        INVALID_INPUT,
+        LAST_SUPER_ADMIN,
+        SAVE_FAILED
+    }
+
+    public record UpdateAdminResult(UpdateAdminStatus status, AdminUser admin) {
+    }
+
+    public enum DeleteAdminResult {
+        DELETED,
+        NOT_FOUND,
+        INVALID_INPUT,
+        FORBIDDEN,
+        SELF_DELETE,
+        LAST_SUPER_ADMIN,
+        SAVE_FAILED
+    }
+
     //Attributes
-    private static final String FILE_PATH = "admins.txt";
-    private List<AdminUser> adminList;
+    private final AdminFileRepository repository;
+    private final List<AdminUser> adminList;
+    private final PasswordEncoder passwordEncoder;
 
     //Constructor
-    public AdminManager() {
+    public AdminManager(AdminFileRepository repository, PasswordEncoder passwordEncoder) {
+        this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
         this.adminList = new ArrayList<>();
         loadAdminsFromFile();
     }
 
-    //Load admins from text file
-    public void loadAdminsFromFile() {
-        adminList.clear();
-        File file = new File(FILE_PATH);
-
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                System.out.println("Error creating file: " + e.getMessage());
-            }
-            return;
-        }
-
-        BufferedReader reader = null;
+    public synchronized void loadAdminsFromFile() {
         try {
-            reader = new BufferedReader(new FileReader(file));
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                if (!line.trim().isEmpty()) {
-                    AdminUser admin = AdminUser.fromFileString(line);
-                    if (admin != null) {
-                        adminList.add(admin);
-                    }
-                }
-            }
+            List<AdminUser> loadedAdmins = repository.loadAll();
+            adminList.clear();
+            adminList.addAll(loadedAdmins);
         } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-                System.out.println("Error closing reader: " + e.getMessage());
-            }
+            throw new UncheckedIOException("Could not load admin accounts", e);
         }
     }
 
-    //Save admins to txt
     private boolean saveAdminsToFile() {
-        Path temporaryFile = null;
         try {
-            Path adminFile = Path.of(FILE_PATH).toAbsolutePath();
-            temporaryFile = Files.createTempFile(adminFile.getParent(), "admins-", ".tmp");
-
-            //Write admin to the temporary file
-            try (BufferedWriter writer = Files.newBufferedWriter(temporaryFile)) {
-                for (AdminUser admin : adminList) {
-                    writer.write(admin.toFileString());
-                    writer.newLine();
-                }
-            }
-
-            Files.move(temporaryFile, adminFile,
-                    StandardCopyOption.REPLACE_EXISTING,
-                    StandardCopyOption.ATOMIC_MOVE);
+            repository.saveAll(adminList);
             return true;
         } catch (IOException e) {
-            System.out.println("Error writing file: " + e.getMessage());
+            System.out.println("Error writing admin file: " + e.getMessage());
             return false;
-        } finally {
-            try {
-                if (temporaryFile != null) {
-                    Files.deleteIfExists(temporaryFile);
-                }
-            } catch (IOException e) {
-                System.out.println("Error removing temporary file: " + e.getMessage());
-            }
         }
     }
 
     //Add new admin
-    public boolean addAdmin(AdminUser newAdmin) {
-        if (newAdmin == null) {
-            System.out.println("Error: Admin details are required!");
-            return false;
+    public synchronized AddAdminResult addAdmin(AdminUser newAdmin) {
+        if (newAdmin == null
+                || !isValidField(newAdmin.getUserId())
+                || !isValidField(newAdmin.getUsername())
+                || !isValidField(newAdmin.getEmail())
+                || !isValidField(newAdmin.getAdminLevel())
+                || !isValidField(newAdmin.getPermissions())) {
+            return AddAdminResult.INVALID_INPUT;
         }
 
-        if (!isValidField(newAdmin.getUserId()) ||
-                !isValidField(newAdmin.getUsername()) ||
-                !isValidField(newAdmin.getPassword()) ||
-                !isValidField(newAdmin.getEmail()) ||
-                !isValidField(newAdmin.getAdminLevel()) ||
-                !isValidField(newAdmin.getPermissions())) {
-            System.out.println("Error: Fill in all admin fields without commas or line breaks!");
-            return false;
+        String rawPassword = newAdmin.getPassword();
+        if (rawPassword == null || rawPassword.isBlank()
+                || rawPassword.getBytes(StandardCharsets.UTF_8).length > 72
+                || rawPassword.indexOf(0) >= 0) {
+            return AddAdminResult.INVALID_INPUT;
         }
 
-        for (AdminUser admin : adminList) {
-            if (admin.getUserId().equalsIgnoreCase(newAdmin.getUserId()) ||
-                    admin.getUsername().equalsIgnoreCase(newAdmin.getUsername())) {
-                System.out.println("Error: Admin ID or Username already exists!");
-                return false;
-            }
+        String userId = newAdmin.getUserId().trim();
+        String username = newAdmin.getUsername().trim();
+        if (getAdminById(userId) != null || findByUsername(username) != null) {
+            return AddAdminResult.DUPLICATE;
         }
 
-        adminList.add(newAdmin);
+        String role = newAdmin.getAdminLevel().trim();
+        if (!"ADMIN".equalsIgnoreCase(role) && !"SUPER_ADMIN".equalsIgnoreCase(role)) {
+            return AddAdminResult.INVALID_INPUT;
+        }
+
+        AdminUser storedAdmin = AdminUser.fromRole(
+                userId, username, passwordEncoder.encode(rawPassword),
+                newAdmin.getEmail().trim(), role, newAdmin.getPermissions().trim());
+
+        adminList.add(storedAdmin);
         if (!saveAdminsToFile()) {
-            //Remove the new admin if saving fails
-            adminList.remove(newAdmin);
-            return false;
+            adminList.remove(storedAdmin);
+            return AddAdminResult.SAVE_FAILED;
         }
-        return true;
+        return AddAdminResult.CREATED;
     }
 
-    public boolean updateAdmin(String userId, String username, String email,
-                               String adminLevel, String permissions) {
+    public synchronized UpdateAdminResult updateAdmin(
+            String userId, String username, String email, String adminLevel, String permissions) {
         if (!isValidField(userId) || !isValidField(username) || !isValidField(email)
                 || !isValidField(adminLevel) || !isValidField(permissions)) {
-            System.out.println("Error: Fill in all admin fields without commas or line breaks!");
-            return false;
+            return new UpdateAdminResult(UpdateAdminStatus.INVALID_INPUT, null);
+        }
+
+        String role = adminLevel.trim();
+        if (!"ADMIN".equalsIgnoreCase(role) && !"SUPER_ADMIN".equalsIgnoreCase(role)) {
+            return new UpdateAdminResult(UpdateAdminStatus.INVALID_INPUT, null);
         }
 
         AdminUser currentAdmin = getAdminById(userId.trim());
         if (currentAdmin == null) {
-            System.out.println("Error: Admin not found!");
-            return false;
+            return new UpdateAdminResult(UpdateAdminStatus.NOT_FOUND, null);
         }
 
         String updatedUsername = username.trim();
-        for (AdminUser admin : adminList) {
-            if (admin != currentAdmin && admin.getUsername().trim().equalsIgnoreCase(updatedUsername)) {
-                System.out.println("Error: Username already exists!");
-                return false;
-            }
+        AdminUser accountWithUsername = findByUsername(updatedUsername);
+        if (accountWithUsername != null && accountWithUsername != currentAdmin) {
+            return new UpdateAdminResult(UpdateAdminStatus.DUPLICATE, null);
         }
 
-        //Keep the same ID and password
-        AdminUser updatedAdmin = new AdminUser(currentAdmin.getUserId(), updatedUsername,
-                currentAdmin.getPassword(), email.trim(), adminLevel.trim(), permissions.trim());
+        // Keep at least one super admin in the account store.
+        if (isSuperAdmin(currentAdmin) && !"SUPER_ADMIN".equalsIgnoreCase(role)
+                && adminList.stream().filter(this::isSuperAdmin).count() == 1) {
+            return new UpdateAdminResult(UpdateAdminStatus.LAST_SUPER_ADMIN, null);
+        }
 
+        // Keep the existing ID and password hash when editing an account.
+        AdminUser updatedAdmin = AdminUser.fromRole(currentAdmin.getUserId(), updatedUsername,
+                currentAdmin.getPassword(), email.trim(), role, permissions.trim());
         int index = adminList.indexOf(currentAdmin);
         adminList.set(index, updatedAdmin);
 
         if (!saveAdminsToFile()) {
-            //Keep the old details if saving fails
             adminList.set(index, currentAdmin);
-            return false;
+            return new UpdateAdminResult(UpdateAdminStatus.SAVE_FAILED, null);
         }
-        return true;
+
+        return new UpdateAdminResult(UpdateAdminStatus.UPDATED, updatedAdmin);
     }
 
-    public boolean deleteAdmin(String userId, String signedInAdminId) {
-        if (!isValidField(userId) || !isValidField(signedInAdminId)) {
-            System.out.println("Error: Both admin IDs are required!");
-            return false;
+    public synchronized DeleteAdminResult deleteAdmin(String userId, String signedInAdminId) {
+        if (!isValidField(userId)) {
+            return DeleteAdminResult.INVALID_INPUT;
+        }
+
+        AdminUser signedInAdmin = getAdminById(signedInAdminId);
+        if (signedInAdmin == null || !isSuperAdmin(signedInAdmin)) {
+            return DeleteAdminResult.FORBIDDEN;
         }
 
         AdminUser adminToDelete = getAdminById(userId.trim());
         if (adminToDelete == null) {
-            System.out.println("Error: Admin not found!");
-            return false;
+            return DeleteAdminResult.NOT_FOUND;
         }
 
-        if (adminToDelete.getUserId().trim().equalsIgnoreCase(signedInAdminId.trim())) {
-            System.out.println("Error: You cannot delete your own account!");
-            return false;
+        // Use the account ID so a username change cannot bypass this check.
+        if (adminToDelete == signedInAdmin) {
+            return DeleteAdminResult.SELF_DELETE;
         }
 
-        if (isSuperAdmin(adminToDelete)) {
-            int superAdminCount = 0;
-            for (AdminUser admin : adminList) {
-                if (isSuperAdmin(admin)) {
-                    superAdminCount++;
-                }
-            }
-
-            if (superAdminCount == 1) {
-                System.out.println("Error: You cannot delete the last super admin!");
-                return false;
-            }
+        if (isSuperAdmin(adminToDelete)
+                && adminList.stream().filter(this::isSuperAdmin).count() == 1) {
+            return DeleteAdminResult.LAST_SUPER_ADMIN;
         }
 
         int index = adminList.indexOf(adminToDelete);
         adminList.remove(index);
 
         if (!saveAdminsToFile()) {
-            //Add the admin back if saving fails
+            // Restore the account in memory if the file could not be saved.
             adminList.add(index, adminToDelete);
-            return false;
+            return DeleteAdminResult.SAVE_FAILED;
         }
-        return true;
+
+        return DeleteAdminResult.DELETED;
     }
 
     private boolean isSuperAdmin(AdminUser admin) {
@@ -220,12 +210,26 @@ public class AdminManager {
     }
 
     //Get all admins
-    public List<AdminUser> getAllAdmins() {
-        return adminList;
+    public synchronized List<AdminUser> getAllAdmins() {
+        return List.copyOf(adminList);
+    }
+
+    //Find an admin by username
+    public synchronized AdminUser findByUsername(String username) {
+        if (!isValidField(username)) {
+            return null;
+        }
+
+        for (AdminUser admin : adminList) {
+            if (admin.getUsername().equalsIgnoreCase(username.trim())) {
+                return admin;
+            }
+        }
+        return null;
     }
 
     //Find admin by ID
-    public AdminUser getAdminById(String userId) {
+    public synchronized AdminUser getAdminById(String userId) {
         for (AdminUser admin : adminList) {
             if (admin.getUserId().equalsIgnoreCase(userId)) {
                 return admin;
