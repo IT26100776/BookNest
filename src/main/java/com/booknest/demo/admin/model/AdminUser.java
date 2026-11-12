@@ -21,10 +21,6 @@ public class AdminUser extends User {
         return permissions;
     }
 
-    public void setPermissions(String permissions) {
-        this.permissions = permissions;
-    }
-
     //Describe the admin role
     @Override
     public String getRoleDetails() {
