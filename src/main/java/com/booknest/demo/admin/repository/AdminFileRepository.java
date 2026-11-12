@@ -34,13 +34,14 @@ public class AdminFileRepository {
                 }
 
                 AdminUser admin = AdminUser.fromFileString(line);
+                //Report invalid records before saving can drop them
                 if (admin == null) {
                     throw new IOException("Invalid admin record at line " + lineNumber);
                 }
                 accounts.add(admin);
             }
         } catch (NoSuchFileException e) {
-            // A fresh installation starts without an account file.
+            //Start with no accounts if the file is missing
             return List.of();
         }
         return accounts;
@@ -56,10 +57,11 @@ public class AdminFileRepository {
                 }
             }
 
-            // Keep the previous account file until the new one is ready.
+            //Replace the old file after writing the temporary file
             Files.move(temporaryFile, adminFile,
                     StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
         } catch (IOException | RuntimeException e) {
+            //Delete the temporary file and pass on the error
             try {
                 Files.deleteIfExists(temporaryFile);
             } catch (IOException cleanupError) {

@@ -1,6 +1,7 @@
 package com.booknest.demo.admin.model;
 
 public abstract class User {
+    //Subclasses use getters for these fields
     private String userId;
     private String username;
     private String password;
@@ -10,7 +11,7 @@ public abstract class User {
     public User() {
     }
 
-    //Parameterized constructor
+    //Constructor with account details
     public User(String userId, String username, String password, String email) {
         this.userId = userId;
         this.username = username;
@@ -52,6 +53,6 @@ public abstract class User {
         this.email = email;
     }
 
-    //Abstract method
+    //Each account type describes its role
     public abstract String getRoleDetails();
 }

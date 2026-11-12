@@ -7,6 +7,7 @@ public final class SuperAdminUser extends AdminUser {
         super(userId, username, passwordHash, email, "SUPER_ADMIN", permissions);
     }
 
+    //Java uses this override for SuperAdminUser objects
     @Override
     public String getRoleDetails() {
         return super.getRoleDetails() + " - Can manage admin accounts";

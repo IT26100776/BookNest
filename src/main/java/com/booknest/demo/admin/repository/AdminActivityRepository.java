@@ -62,7 +62,7 @@ public class AdminActivityRepository {
             return new AdminActivity(Instant.parse(fields[0]), Action.valueOf(fields[1]),
                     fields[2], fields[3]);
         } catch (DateTimeParseException | IllegalArgumentException e) {
-            // A partial line should not hide the other activity entries.
+            //Skip broken lines and keep valid entries
             return null;
         }
     }
