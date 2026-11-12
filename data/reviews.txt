@@ -1,2 +1,3 @@
-e57c8320-1662-4b18-a148-e26bfed0a792|PUBLIC|MQ==|WWFzYW50aGEgSW5kdXdhcmE=|5|SSBsZWFybnQgbWFueSBuZXcgdGhpbmdzIGZyb20gdGhpcyBib29rLiBJIHJlY29tbWVuZCB0aGlzIGJvb2sgdG8gYW55b25lIHdobyBpcyB3aWxsaW5nIHRvIGxlYXJuIHRvIGNvZGUu
-6cb76b25-4aa8-4a87-be1f-d0cd4812056c|PUBLIC|Mg==|WWFzYW50aGEgSW5kdXdhcmE=|4|T25lIG9mIHRoZSBiZXN0IG5vdmVscyBJJ3ZlIHJlYWQgc28gZmFyLiBUaGUgYXV0aG9yIGhhcyBkb25lIGEgZmFudGFzdGljIGpvYiBpbiBidWlsZGluZyB0aGUgc3Rvcnku
+R2|e57c8320-1662-4b18-a148-e26bfed0a792|PUBLIC|1|Yasantha Induwara|5|I learnt many new things from this book. I recommend this book to anyone who is willing to learn to code.
+R2|6cb76b25-4aa8-4a87-be1f-d0cd4812056c|PUBLIC|2|Yasantha Induwara|4|One of the best novels I've read so far. The author has done a fantastic job in building the story.
+R2|0c477e1a-0835-420c-bc0b-c53f423e74ed|PUBLIC|3|SPY Induwera|5|What a comic this is. An excellent character. I'm the night, I'm vengeance, I'm Batman.

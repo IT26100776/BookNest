@@ -1,14 +1,12 @@
+
 package com.booknest.demo.ordermanagement.repository;
 
-
 import org.springframework.stereotype.Repository;
-
 
 import com.booknest.demo.ordermanagement.model.Order;
 import com.booknest.demo.ordermanagement.model.OrderItem;
 import com.booknest.demo.ordermanagement.model.OrderStatus;
 import com.booknest.demo.ordermanagement.model.PaymentStatus;
-
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -28,6 +26,46 @@ public class OrderFileManager {
 
     private final Path filePath = Path.of("data", "orders.txt");
 
+    // Escape text so delimiters and line breaks do not damage records
+    private String escape(String value) {
+        if (value == null) return "";
+
+        return value
+                .replace("\\", "\\\\")
+                .replace("|", "\\p")
+                .replace(",", "\\c")
+                .replace(";", "\\s")
+                .replace("\r", "\\r")
+                .replace("\n", "\\n");
+    }
+
+    // Restore escaped text
+    private String unescape(String value) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+
+            if (c == '\\' && i + 1 < value.length()) {
+                char next = value.charAt(++i);
+
+                switch (next) {
+                    case '\\' -> result.append('\\');
+                    case 'p' -> result.append('|');
+                    case 'c' -> result.append(',');
+                    case 's' -> result.append(';');
+                    case 'r' -> result.append('\r');
+                    case 'n' -> result.append('\n');
+                    default -> result.append('\\').append(next);
+                }
+            } else {
+                result.append(c);
+            }
+        }
+
+        return result.toString();
+    }
+
     // Load all orders
     public List<Order> loadOrders() throws IOException {
 
@@ -41,7 +79,6 @@ public class OrderFileManager {
                 Files.readAllLines(filePath, StandardCharsets.UTF_8);
 
         for (String line : lines) {
-
             if (!line.isBlank()) {
                 orders.add(parseOrder(line));
             }
@@ -59,7 +96,6 @@ public class OrderFileManager {
                 .findFirst();
     }
 
-    // Find orders belonging to a customer
     // Find orders belonging to a customer
     public List<Order> findOrdersByCustomerId(String customerId)
             throws IOException {
@@ -141,8 +177,7 @@ public class OrderFileManager {
         }
     }
 
-    // Convert an Order object into a text record
-
+    // Convert an Order object into a readable text record
     private String formatOrder(Order order) {
 
         StringBuilder itemData = new StringBuilder();
@@ -153,23 +188,19 @@ public class OrderFileManager {
                 itemData.append(";");
             }
 
-            String encodedTitle = Base64.getEncoder()
-                    .encodeToString(
-                            item.getBookTitle().getBytes(StandardCharsets.UTF_8)
-                    );
-
             itemData.append(item.getBookId()).append(",")
                     .append(item.getQuantity()).append(",")
                     .append(item.getUnitPrice().toPlainString()).append(",")
-                    .append(encodedTitle);
+                    .append(escape(item.getBookTitle()));
         }
 
-        return order.getOrderId() + "|"
-                + order.getCustomerId() + "|"
-                + encodeField(order.getCustomerName()) + "|"
-                + encodeField(order.getEmail()) + "|"
-                + encodeField(order.getPhone()) + "|"
-                + encodeField(order.getDeliveryAddress()) + "|"
+        return "O2|"
+                + order.getOrderId() + "|"
+                + escape(order.getCustomerId()) + "|"
+                + escape(order.getCustomerName()) + "|"
+                + escape(order.getEmail()) + "|"
+                + escape(order.getPhone()) + "|"
+                + escape(order.getDeliveryAddress()) + "|"
                 + order.getStatus().name() + "|"
                 + order.getPaymentStatus().name() + "|"
                 + order.getOrderDate() + "|"
@@ -177,16 +208,7 @@ public class OrderFileManager {
                 + itemData;
     }
 
-    private String encodeField(String value) {
-        if (value == null) {
-            return "";
-        }
-
-        return Base64.getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(value.getBytes(StandardCharsets.UTF_8));
-    }
-
+    // Decode existing Base64 URL-encoded customer fields
     private String decodeField(String value) {
         if (value == null || value.isEmpty()) {
             return "";
@@ -198,9 +220,15 @@ public class OrderFileManager {
         );
     }
 
+    // Decode existing Base64 book titles
+    private String decodeTitle(String value) {
+        return new String(
+                Base64.getDecoder().decode(value),
+                StandardCharsets.UTF_8
+        );
+    }
 
     // Convert a text record back into an Order object
-
     private Order parseOrder(String line) throws IOException {
 
         try {
@@ -209,16 +237,39 @@ public class OrderFileManager {
 
             Order order = new Order();
 
-            if (data.length == 7) {
-                // Backward compatibility with older order records
+            // New readable O2 format
+            if (data.length == 12 && data[0].equals("O2")) {
 
+                order.setOrderId(Integer.parseInt(data[1]));
+                order.setCustomerId(unescape(data[2]));
+                order.setCustomerName(unescape(data[3]));
+                order.setEmail(unescape(data[4]));
+                order.setPhone(unescape(data[5]));
+                order.setDeliveryAddress(unescape(data[6]));
+                order.setStatus(OrderStatus.valueOf(data[7]));
+                order.setPaymentStatus(PaymentStatus.valueOf(data[8]));
+                order.setOrderDate(LocalDateTime.parse(data[9]));
+
+                parseItems(data[11], order, true);
+
+                BigDecimal storedTotal = new BigDecimal(data[10]);
+
+                if (order.getTotalAmount().compareTo(storedTotal) != 0) {
+                    throw new IllegalArgumentException(
+                            "Order total does not match its items"
+                    );
+                }
+
+            } else if (data.length == 7) {
+
+                // Backward compatibility with older order records
                 order.setOrderId(Integer.parseInt(data[0]));
                 order.setCustomerId(data[1]);
                 order.setStatus(OrderStatus.valueOf(data[2]));
                 order.setPaymentStatus(PaymentStatus.valueOf(data[3]));
                 order.setOrderDate(LocalDateTime.parse(data[4]));
 
-                parseItems(data[6], order);
+                parseItems(data[6], order, false);
 
                 BigDecimal storedTotal = new BigDecimal(data[5]);
 
@@ -229,8 +280,8 @@ public class OrderFileManager {
                 }
 
             } else if (data.length == 11) {
-                // New order records with guest customer details
 
+                // Backward compatibility with existing guest orders
                 order.setOrderId(Integer.parseInt(data[0]));
                 order.setCustomerId(data[1]);
                 order.setCustomerName(decodeField(data[2]));
@@ -241,7 +292,7 @@ public class OrderFileManager {
                 order.setPaymentStatus(PaymentStatus.valueOf(data[7]));
                 order.setOrderDate(LocalDateTime.parse(data[8]));
 
-                parseItems(data[10], order);
+                parseItems(data[10], order, false);
 
                 BigDecimal storedTotal = new BigDecimal(data[9]);
 
@@ -266,17 +317,25 @@ public class OrderFileManager {
         }
     }
 
-    private void parseItems(String itemData, Order order) {
+    // Read order items in both old and new formats
+    private void parseItems(
+            String itemData,
+            Order order,
+            boolean readableFormat) {
 
         List<OrderItem> items = new ArrayList<>();
 
         if (!itemData.isEmpty()) {
 
-            String[] itemRecords = itemData.split(";");
+            String[] itemRecords = readableFormat
+                    ? splitEscaped(itemData, ';')
+                    : itemData.split(";");
 
             for (String record : itemRecords) {
 
-                String[] fields = record.split(",", -1);
+                String[] fields = readableFormat
+                        ? splitEscaped(record, ',')
+                        : record.split(",", -1);
 
                 if (fields.length != 4) {
                     throw new IllegalArgumentException("Invalid order item");
@@ -286,10 +345,9 @@ public class OrderFileManager {
                 int quantity = Integer.parseInt(fields[1]);
                 BigDecimal unitPrice = new BigDecimal(fields[2]);
 
-                String title = new String(
-                        Base64.getDecoder().decode(fields[3]),
-                        StandardCharsets.UTF_8
-                );
+                String title = readableFormat
+                        ? unescape(fields[3])
+                        : decodeTitle(fields[3]);
 
                 items.add(new OrderItem(
                         bookId,
@@ -303,4 +361,36 @@ public class OrderFileManager {
         order.setItems(items);
     }
 
+    // Split on a delimiter while respecting escaped characters
+    private String[] splitEscaped(String value, char delimiter) {
+
+        List<String> parts = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean escaped = false;
+
+        for (int i = 0; i < value.length(); i++) {
+
+            char c = value.charAt(i);
+
+            if (escaped) {
+                current.append('\\').append(c);
+                escaped = false;
+            } else if (c == '\\') {
+                escaped = true;
+            } else if (c == delimiter) {
+                parts.add(current.toString());
+                current.setLength(0);
+            } else {
+                current.append(c);
+            }
+        }
+
+        if (escaped) {
+            current.append('\\');
+        }
+
+        parts.add(current.toString());
+
+        return parts.toArray(new String[0]);
+    }
 }

@@ -1,3 +1,4 @@
+
 package com.booknest.demo.review.repository;
 
 import com.booknest.demo.review.model.VerifiedReview;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Repository
 public class ReviewRepository {
+
     private final Path filePath =
             Paths.get("data", "reviews.txt").toAbsolutePath();
 
@@ -32,34 +34,86 @@ public class ReviewRepository {
         }
     }
 
-    private String encode(String value) {
-        return Base64.getEncoder().encodeToString(
-                value.getBytes(StandardCharsets.UTF_8));
+    // Escape special characters for readable text storage
+    private String escape(String value) {
+        if (value == null) return "";
+
+        return value
+                .replace("\\", "\\\\")
+                .replace("|", "\\p")
+                .replace("\r", "\\r")
+                .replace("\n", "\\n");
     }
 
-    private String decode(String value) {
-        return new String(
-                Base64.getDecoder().decode(value),
-                StandardCharsets.UTF_8);
+    // Restore escaped text
+    private String unescape(String value) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+
+            if (c == '\\' && i + 1 < value.length()) {
+                char next = value.charAt(++i);
+
+                switch (next) {
+                    case '\\' -> result.append('\\');
+                    case 'p' -> result.append('|');
+                    case 'r' -> result.append('\r');
+                    case 'n' -> result.append('\n');
+                    default -> result.append('\\').append(next);
+                }
+            } else {
+                result.append(c);
+            }
+        }
+
+        return result.toString();
     }
 
+    // Read old and new review records
     public synchronized List<Review> findAll() {
+
         List<Review> reviews = new ArrayList<>();
+
         try {
             for (String line :
                     Files.readAllLines(filePath, StandardCharsets.UTF_8)) {
 
-                if (line.isBlank()) {
-                    continue;
-                }
+                if (line.isBlank()) continue;
 
                 String[] parts = line.split("\\|", -1);
 
                 try {
                     Review review;
 
-                    // Support old records (5 fields)
-                    if (parts.length == 5) {
+                    // New readable format
+                    if (parts.length == 7 && parts[0].equals("R2")) {
+
+                        String type = parts[2];
+
+                        if (type.equals("VERIFIED")) {
+                            review = new VerifiedReview(
+                                    parts[1],
+                                    unescape(parts[3]),
+                                    unescape(parts[4]),
+                                    Integer.parseInt(parts[5]),
+                                    unescape(parts[6])
+                            );
+                        } else if (type.equals("PUBLIC")) {
+                            review = new PublicReview(
+                                    parts[1],
+                                    unescape(parts[3]),
+                                    unescape(parts[4]),
+                                    Integer.parseInt(parts[5]),
+                                    unescape(parts[6])
+                            );
+                        } else {
+                            continue;
+                        }
+                    }
+
+                    // Old 5-field format
+                    else if (parts.length == 5) {
                         review = new PublicReview(
                                 parts[0],
                                 decode(parts[1]),
@@ -69,7 +123,7 @@ public class ReviewRepository {
                         );
                     }
 
-                    // Support new records (6 fields)
+                    // Old 6-field Base64 format
                     else if (parts.length == 6) {
 
                         String type = parts[1];
@@ -100,7 +154,7 @@ public class ReviewRepository {
                     reviews.add(review);
 
                 } catch (IllegalArgumentException e) {
-                    // Skip malformed records.
+                    // Skip malformed records
                 }
             }
 
@@ -111,8 +165,17 @@ public class ReviewRepository {
         }
     }
 
+    // Decode existing Base64 records
+    private String decode(String value) {
+        return new String(
+                Base64.getDecoder().decode(value),
+                StandardCharsets.UTF_8
+        );
+    }
 
+    // Save reviews in readable format
     public synchronized void saveAll(List<Review> reviews) {
+
         List<String> lines = new ArrayList<>();
 
         for (Review review : reviews) {
@@ -122,12 +185,13 @@ public class ReviewRepository {
                     : "PUBLIC";
 
             lines.add(
-                    review.getId() + "|" +
+                    "R2|" +
+                            review.getId() + "|" +
                             type + "|" +
-                            encode(review.getBookId()) + "|" +
-                            encode(review.getReviewerName()) + "|" +
+                            escape(review.getBookId()) + "|" +
+                            escape(review.getReviewerName()) + "|" +
                             review.getRating() + "|" +
-                            encode(review.getComment())
+                            escape(review.getComment())
             );
         }
 
@@ -144,5 +208,4 @@ public class ReviewRepository {
             throw new RuntimeException("Could not save reviews.", e);
         }
     }
-
 }
