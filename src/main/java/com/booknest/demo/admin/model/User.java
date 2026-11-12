@@ -1,11 +1,10 @@
 package com.booknest.demo.admin.model;
 
 public abstract class User {
-    //Protected attributes
-    protected String userId;
-    protected String username;
-    protected String password;
-    protected String email;
+    private String userId;
+    private String username;
+    private String password;
+    private String email;
 
     //Default constructor
     public User() {
