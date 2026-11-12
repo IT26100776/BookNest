@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BookNest | Admin Dashboard</title>
+
+    <link rel="stylesheet" href="css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+
+<div class="admin-wrapper">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <h2>BookNest</h2>
+            <span>Administration</span>
+        </div>
+
+        <nav>
+            <a href="#dashboard" class="active">Dashboard</a>
+            <a href="#books">Manage Books</a>
+            <a href="#add-book">Add New Book</a>
+            <a href="#inventory">Inventory</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="index.html">Visit Store</a>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h3>Admin Dashboard</h3>
+                <p>Manage your BookNest bookstore</p>
+            </div>
+
+            <div class="admin-profile">
+                <span>Administrator</span>
+                <div class="profile-icon">A</div>
+            </div>
+        </header>
+
+
+        <!-- DASHBOARD -->
+        <section id="dashboard">
+
+            <h4>Overview</h4>
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <span>Total Books</span>
+                    <h2 id="totalBooks">0</h2>
+                </div>
+
+                <div class="stat-card">
+                    <span>Total Stock</span>
+                    <h2 id="totalStock">0</h2>
+                </div>
+
+                <div class="stat-card">
+                    <span>Out of Stock</span>
+                    <h2 id="outOfStock">0</h2>
+                </div>
+
+                <div class="stat-card">
+                    <span>Inventory Value</span>
+                    <h2 id="inventoryValue">Rs. 0</h2>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- BOOK MANAGEMENT -->
+        <section id="books" class="content-section">
+
+            <div class="section-heading">
+                <div>
+                    <h4>Book Management</h4>
+                    <p>Manage your bookstore catalogue</p>
+                </div>
+
+                <a href="#add-book" class="add-button">
+                    + Add New Book
+                </a>
+            </div>
+
+            <div class="table-container">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Book ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="bookTableBody">
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                Book data will appear here.
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        
+
+<!-- EDIT BOOK SECTION -->
+<section id="edit-book" class="content-section" style="display: none;">
+
+    <h4>Edit Book</h4>
+    <p>Update the details of an existing book.</p>
+
+    <div class="form-container">
+
+        <form id="editBookForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Book ID</label>
+                    <input type="text" id="editId" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Book Title *</label>
+                    <input type="text" id="editTitle" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Author *</label>
+                    <input type="text" id="editAuthor" required>
+                </div>
+
+                <div class="form-group">
+                    <label>ISBN *</label>
+                    <input type="text" id="editIsbn" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Publisher</label>
+                    <input type="text" id="editPublisher">
+                </div>
+
+                <div class="form-group">
+                    <label>Genre</label>
+                    <input type="text" id="editGenre">
+                </div>
+
+                <div class="form-group">
+                    <label>Language</label>
+                    <input type="text" id="editLanguage">
+                </div>
+
+                <div class="form-group">
+                    <label>Price (Rs.) *</label>
+                    <input type="number" id="editPrice"
+                           min="0.01" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Stock Quantity *</label>
+                    <input type="number" id="editStock"
+                           min="0" step="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Pages</label>
+                    <input type="number" id="editPages" min="1">
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button type="submit" class="save-button">
+                    Save Changes
+                </button>
+
+                <button type="button" id="cancelEdit"
+                        class="reset-button">
+                    Cancel
+                </button>
+
+            </div>
+
+            <p id="editMessage"></p>
+
+        </form>
+
+    </div>
+
+</section>
+<!-- END EDIT BOOK SECTION -->
+
+
+<!-- ADD BOOK -->
+<section id="add-book" class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <h4>Add New Book</h4>
+            <p>Register a new book in your bookstore inventory.</p>
+        </div>
+    </div>
+
+    <div class="form-container">
+
+        <form id="addBookForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="title">Book Title *</label>
+                    <input type="text" id="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="author">Author *</label>
+                    <input type="text" id="author" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="isbn">ISBN *</label>
+                    <input type="text" id="isbn" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="publisher">Publisher</label>
+                    <input type="text" id="publisher">
+                </div>
+
+                <div class="form-group">
+                    <label for="genre">Genre</label>
+                    <input type="text" id="genre">
+                </div>
+
+                <div class="form-group">
+                    <label for="language">Language</label>
+                    <input type="text" id="language">
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Selling Price (Rs.) *</label>
+                    <input type="number" id="price"
+                           min="0.01" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="stockQuantity">Stock Quantity *</label>
+                    <input type="number" id="stockQuantity"
+                           min="0" step="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="pages">Number of Pages</label>
+                    <input type="number" id="pages"
+                           min="1" step="1">
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button type="submit" class="save-button">
+                    Add Book to Inventory
+                </button>
+
+                <button type="reset" class="reset-button">
+                    Clear Form
+                </button>
+
+            </div>
+
+            <p id="formMessage" role="status"></p>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+
+        <!-- INVENTORY -->
+        <section id="inventory" class="content-section">
+
+            <h4>Inventory Management</h4>
+            <p>Stock management functionality will be added here.</p>
+
+        </section>
+
+    </main>
+
+</div>
+	
+<script src="js/admin.js"></script>
+
+</body>
+</html>
