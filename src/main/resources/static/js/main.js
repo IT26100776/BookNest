@@ -519,6 +519,49 @@ set(id, format, qty) {
     count() { return this.items.reduce((n, i) => n + i.qty, 0); },
     subtotal() { return this.items.reduce((n, i) => n + bookById(i.id).price[i.format] * i.qty, 0); }
   };
+	
+	// ==========
+// BOOKNEST CHECKOUT INTERFACE
+// Allows checkout.html to access the cart
+// ==========
+window.BookNestCart = {
+getItems() {
+
+    return Cart.items.map(item => {
+
+        const book = bookById(item.id);
+
+        if (!book) return null;
+
+        const unitPrice = Number(book.price[item.format]);
+
+        return {
+            bookId: Number(book.id),
+            title: book.title,
+            author: book.author,
+            quantity: item.qty,
+            unitPrice: unitPrice,
+            subtotal: unitPrice * item.qty,
+            stockQuantity: book.stockQuantity
+        };
+
+    }).filter(Boolean);
+
+},
+
+getSubtotal() {
+    return Cart.subtotal();
+},
+
+getCount() {
+    return Cart.count();
+},
+
+clear() {
+    Cart.items = [];
+    Cart.save();
+}
+};
 
   let announce = () => {};
   let openBasket = () => {};
@@ -660,8 +703,19 @@ showToast(book, format);
       });
 
       const checkout = $('[data-checkout]', drawer);
-      const note = $('[data-checkout-note]', drawer);
-      if (checkout && note) checkout.addEventListener('click', () => { note.hidden = false; });
+const note = $('[data-checkout-note]', drawer);
+if (checkout) {
+    checkout.addEventListener('click', () => {
+    if (Cart.count() === 0) {
+        if (note) {
+            note.hidden = false;
+        }
+        return;
+    }
+
+    window.location.href = 'checkout.html';
+});
+}
     }
 
     // Toast "View basket" button
@@ -1151,8 +1205,10 @@ announce(`${n} ${n === 1 ? 'copy' : 'copies'} of ${book.title}, ${FORMATS[f].toL
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startBookNest);
+document.addEventListener('DOMContentLoaded', () => {
+    window.BookNestReady = startBookNest();
+});
 } else {
-    startBookNest();
+window.BookNestReady = startBookNest();
 }
 })();

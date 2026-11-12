@@ -1,5 +1,14 @@
 package com.booknest.demo;
 
+import java.util.function.Supplier;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
+import org.springframework.util.StringUtils;
 import com.booknest.demo.admin.model.AdminUser;
 import com.booknest.demo.admin.service.AdminManager;
 import com.booknest.demo.admin.service.AdminUserDetailsService.AdminPrincipal;
@@ -27,7 +36,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AdminManager adminManager)
             throws Exception {
-        http.addFilterBefore(new AdminSessionFilter(adminManager), AuthorizationFilter.class)
+        http
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
+                )
+                .addFilterBefore(new AdminSessionFilter(adminManager), AuthorizationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.GET, "/", "/index.html", "/shop.html",
@@ -92,6 +106,40 @@ public class SecurityConfig {
             return signedInAsSuperAdmin
                     ? !"SUPER_ADMIN".equalsIgnoreCase(role.trim())
                     : !"ADMIN".equalsIgnoreCase(role.trim());
+        }
+    }
+
+    private static final class SpaCsrfTokenRequestHandler
+            implements CsrfTokenRequestHandler {
+
+        private final CsrfTokenRequestAttributeHandler plain =
+                new CsrfTokenRequestAttributeHandler();
+
+        private final XorCsrfTokenRequestAttributeHandler xor =
+                new XorCsrfTokenRequestAttributeHandler();
+
+        @Override
+        public void handle(
+                HttpServletRequest request,
+                HttpServletResponse response,
+                Supplier<CsrfToken> csrfToken) {
+
+            this.xor.handle(request, response, csrfToken);
+
+            // Force generation of the deferred token and cookie
+            csrfToken.get();
+        }
+
+        @Override
+        public String resolveCsrfTokenValue(
+                HttpServletRequest request,
+                CsrfToken csrfToken) {
+
+            String headerValue = request.getHeader(csrfToken.getHeaderName());
+
+            return StringUtils.hasText(headerValue)
+                    ? this.plain.resolveCsrfTokenValue(request, csrfToken)
+                    : this.xor.resolveCsrfTokenValue(request, csrfToken);
         }
     }
 }

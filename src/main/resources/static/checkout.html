@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | BookNest</title>
+
+    <link rel="stylesheet" href="css/checkout.css">
+
+    <style>
+        body {
+            background: #f8f7f5;
+        }
+
+        .checkout-container {
+            max-width: 1100px;
+            margin: 60px auto;
+            padding: 20px;
+        }
+
+        .checkout-title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 25px;
+        }
+
+        .checkout-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+        }
+
+        .checkout-card h3 {
+            margin-bottom: 25px;
+        }
+
+        .checkout-form label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+
+        .checkout-form input,
+        .checkout-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font: inherit;
+        }
+
+        .checkout-form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .place-order-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 25px;
+            background: #7b263a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .place-order-btn:hover {
+            background: #5f1c2c;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #7b263a;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="checkout-container">
+
+    <div class="checkout-title">
+        <h1>BookNest Checkout</h1>
+        <p>Complete your details to place your order.</p>
+    </div>
+
+    <div class="checkout-layout">
+
+        <!-- Customer Details -->
+        <div class="checkout-card">
+            <h3>Delivery Information</h3>
+
+            <form id="checkoutForm" class="checkout-form">
+
+                <label for="customerName">Full Name</label>
+                <input
+                    type="text"
+                    id="customerName"
+                    name="customerName"
+                    placeholder="Enter your full name"
+                    required
+                >
+
+                <label for="customerEmail">Email Address</label>
+                <input
+                    type="email"
+                    id="customerEmail"
+                    name="email"
+                    placeholder="Enter your email address"
+                    required
+                >
+
+                <label for="customerPhone">Phone Number</label>
+                <input
+                    type="tel"
+                    id="customerPhone"
+                    name="phone"
+                    placeholder="Enter your phone number"
+                    required
+                >
+
+                <label for="deliveryAddress">Delivery Address</label>
+                <textarea
+                    id="deliveryAddress"
+                    name="deliveryAddress"
+                    placeholder="Enter your complete delivery address"
+                    required
+                ></textarea>
+				
+				<div id="checkoutMessage" role="status" aria-live="polite"></div>
+
+                <button type="submit" id="placeOrderButton" class="place-order-btn">
+                    Place Order
+                </button>
+
+            </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="checkout-card">
+            <h3>Your Order</h3>
+
+            <div id="checkoutItems">
+                <p>Loading your cart...</p>
+            </div>
+
+            <div class="order-total">
+                <span>Total</span>
+                <span id="checkoutTotal">Rs. 0.00</span>
+            </div>
+
+            <a href="shop.html" class="back-link">
+                ← Continue Shopping
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="js/main.js"></script>
+	<script src="js/checkout.js"></script>
+
+</body>
+</html>
