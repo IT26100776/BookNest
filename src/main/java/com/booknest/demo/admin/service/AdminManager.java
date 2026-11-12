@@ -41,7 +41,7 @@ public class AdminManager {
         SAVE_FAILED
     }
 
-    //Attributes
+    //The repository handles file reads and writes
     private final AdminFileRepository repository;
     private final List<AdminUser> adminList;
     private final PasswordEncoder passwordEncoder;
@@ -60,6 +60,7 @@ public class AdminManager {
             adminList.clear();
             adminList.addAll(loadedAdmins);
         } catch (IOException e) {
+            //Stop startup if the account file is unreadable
             throw new UncheckedIOException("Could not load admin accounts", e);
         }
     }
@@ -69,12 +70,13 @@ public class AdminManager {
             repository.saveAll(adminList);
             return true;
         } catch (IOException e) {
+            //Return false so the caller can undo the change
             System.out.println("Error writing admin file: " + e.getMessage());
             return false;
         }
     }
 
-    //Add new admin
+    //Handle one account change at a time
     public synchronized AddAdminResult addAdmin(AdminUser newAdmin) {
         if (newAdmin == null
                 || !isValidField(newAdmin.getUserId())
@@ -85,6 +87,7 @@ public class AdminManager {
             return AddAdminResult.INVALID_INPUT;
         }
 
+        //BCrypt has a 72-byte password limit
         String rawPassword = newAdmin.getPassword();
         if (rawPassword == null || rawPassword.isBlank()
                 || rawPassword.getBytes(StandardCharsets.UTF_8).length > 72
@@ -103,12 +106,14 @@ public class AdminManager {
             return AddAdminResult.INVALID_INPUT;
         }
 
+        //Hash the password before saving
         AdminUser storedAdmin = AdminUser.fromRole(
                 userId, username, passwordEncoder.encode(rawPassword),
                 newAdmin.getEmail().trim(), role, newAdmin.getPermissions().trim());
 
         adminList.add(storedAdmin);
         if (!saveAdminsToFile()) {
+            //Remove the new account if saving fails
             adminList.remove(storedAdmin);
             return AddAdminResult.SAVE_FAILED;
         }
@@ -138,19 +143,20 @@ public class AdminManager {
             return new UpdateAdminResult(UpdateAdminStatus.DUPLICATE, null);
         }
 
-        // Keep at least one super admin in the account store.
+        //Keep at least one super admin
         if (isSuperAdmin(currentAdmin) && !"SUPER_ADMIN".equalsIgnoreCase(role)
                 && adminList.stream().filter(this::isSuperAdmin).count() == 1) {
             return new UpdateAdminResult(UpdateAdminStatus.LAST_SUPER_ADMIN, null);
         }
 
-        // Keep the existing ID and password hash when editing an account.
+        //Keep the account ID and password hash
         AdminUser updatedAdmin = AdminUser.fromRole(currentAdmin.getUserId(), updatedUsername,
                 currentAdmin.getPassword(), email.trim(), role, permissions.trim());
         int index = adminList.indexOf(currentAdmin);
         adminList.set(index, updatedAdmin);
 
         if (!saveAdminsToFile()) {
+            //Restore the old details if saving fails
             adminList.set(index, currentAdmin);
             return new UpdateAdminResult(UpdateAdminStatus.SAVE_FAILED, null);
         }
@@ -173,7 +179,7 @@ public class AdminManager {
             return DeleteAdminResult.NOT_FOUND;
         }
 
-        // Use the account ID so a username change cannot bypass this check.
+        //Use the account ID to block self-deletion
         if (adminToDelete == signedInAdmin) {
             return DeleteAdminResult.SELF_DELETE;
         }
@@ -187,7 +193,7 @@ public class AdminManager {
         adminList.remove(index);
 
         if (!saveAdminsToFile()) {
-            // Restore the account in memory if the file could not be saved.
+            //Restore the deleted account if saving fails
             adminList.add(index, adminToDelete);
             return DeleteAdminResult.SAVE_FAILED;
         }
@@ -205,11 +211,11 @@ public class AdminManager {
             return false;
         }
 
-        //Comma separated fields with ","
+        //Commas and line breaks break the file format
         return !value.contains(",") && !value.contains("\n") && !value.contains("\r");
     }
 
-    //Get all admins
+    //Return a copy of the account list
     public synchronized List<AdminUser> getAllAdmins() {
         return List.copyOf(adminList);
     }
@@ -228,7 +234,7 @@ public class AdminManager {
         return null;
     }
 
-    //Find admin by ID
+    //Find an admin by ID
     public synchronized AdminUser getAdminById(String userId) {
         for (AdminUser admin : adminList) {
             if (admin.getUserId().equalsIgnoreCase(userId)) {

@@ -56,6 +56,7 @@ public class AdminLoginController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
+        //Find the signed-in admin by ID
         AdminUser admin = adminManager.getAdminById(principal.getUserId());
         if (admin == null) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -67,10 +68,11 @@ public class AdminLoginController {
     @GetMapping({"/admins/csrf", "/csrf"})
     public Map<String, String> adminCsrfToken(
             @RequestAttribute(API_CSRF_TOKEN_ATTRIBUTE) CsrfToken csrfToken) {
-        // Give the admin page the token it needs for write requests.
+        //The page sends this token with write requests
         return Map.of("headerName", csrfToken.getHeaderName(), "token", csrfToken.getToken());
     }
 
+    //Load the accounts table
     @GetMapping("/admins")
     public List<AdminResponse> listAdmins() {
         return adminManager.getAllAdmins().stream()
@@ -78,19 +80,21 @@ public class AdminLoginController {
                 .toList();
     }
 
+    //Receive the Add Admin form after security checks
     @PostMapping("/admins")
     public ResponseEntity<AdminResponse> createAdmin(
             @Valid @RequestBody AdminCreateRequest request, Principal principal) {
         String role = request.adminLevel();
         String userId = UUID.randomUUID().toString();
 
-        //Set permissions on the server
+        //Set permissions based on the role
         String permissions = permissionsForRole(role);
         AdminUser newAdmin = new AdminUser(userId, request.username(), request.password(),
                 request.email(), role, permissions);
 
         return switch (adminManager.addAdmin(newAdmin)) {
             case CREATED -> {
+                //Log the change after saving
                 activityService.record(Action.CREATED, principal.getName(), userId);
                 yield ResponseEntity.status(HttpStatus.CREATED)
                         .body(new AdminResponse(userId, request.username().trim(),
@@ -100,6 +104,7 @@ public class AdminLoginController {
                     HttpStatus.CONFLICT, "An admin with this username or ID already exists.");
             case INVALID_INPUT -> throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "The admin account details are invalid.");
+            //Return HTTP 500 if saving fails
             case SAVE_FAILED -> throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, "Could not save the admin account.");
         };
