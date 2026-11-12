@@ -1,5 +1,7 @@
 package com.booknest.demo.admin.controller;
 
+import static com.booknest.demo.SecurityConfig.API_CSRF_TOKEN_ATTRIBUTE;
+
 import com.booknest.demo.admin.dto.AdminCreateRequest;
 import com.booknest.demo.admin.dto.AdminResponse;
 import com.booknest.demo.admin.dto.AdminUpdateRequest;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,7 +65,8 @@ public class AdminLoginController {
     }
 
     @GetMapping({"/admins/csrf", "/csrf"})
-    public Map<String, String> adminCsrfToken(CsrfToken csrfToken) {
+    public Map<String, String> adminCsrfToken(
+            @RequestAttribute(API_CSRF_TOKEN_ATTRIBUTE) CsrfToken csrfToken) {
         // Give the admin page the token it needs for write requests.
         return Map.of("headerName", csrfToken.getHeaderName(), "token", csrfToken.getToken());
     }
