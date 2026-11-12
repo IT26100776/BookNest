@@ -52,7 +52,7 @@ public class SecurityConfig {
                                 "/api/admin/activity", "/api/admin/admins", "/api/admin/admins/**")
                         .hasRole("SUPER_ADMIN")
                         .requestMatchers("/admin/dashboard.html", "/admin.html", "/js/admin.js",
-                                "/api/admin/**").hasRole("ADMIN")
+                                "/js/admin-navigation.js", "/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/books", "/api/books/**")
                         .permitAll()
                         .requestMatchers("/api/books", "/api/books/**").hasRole("ADMIN")
