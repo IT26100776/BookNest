@@ -48,9 +48,17 @@ public class AdminLoginController {
     }
 
     @GetMapping("/me")
-    public Map<String, String> currentAdmin(Principal principal) {
-        //Get the username from the session
-        return Map.of("username", principal.getName());
+    public Map<String, String> currentAdmin(@AuthenticationPrincipal AdminPrincipal principal) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        AdminUser admin = adminManager.getAdminById(principal.getUserId());
+        if (admin == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        return Map.of("username", admin.getUsername(), "adminLevel", admin.getAdminLevel());
     }
 
     @GetMapping({"/admins/csrf", "/csrf"})
