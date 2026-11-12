@@ -58,7 +58,7 @@ function accountRow(account) {
     const actions = document.createElement("div");
     actions.className = "actions";
     const edit = actionButton("Edit", () => openForm(account));
-    edit.classList.add("btn-outline-secondary");
+    edit.classList.add("admin-secondary-button");
     const remove = actionButton("Delete", () => openDeleteDialog(account, remove));
     remove.classList.add("btn-outline-danger");
     actions.append(edit, remove);

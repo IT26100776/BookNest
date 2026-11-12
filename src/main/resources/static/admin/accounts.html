@@ -4,36 +4,46 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin accounts | BookNest Admin</title>
-    <link rel="stylesheet" href="vendor/bootstrap.min.css">
-    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/admin.css">
     <script src="accounts.js" defer></script>
 </head>
 <body>
 <a class="visually-hidden-focusable skip-link" href="#main-content">Skip to content</a>
-<div class="admin-layout">
-    <aside class="admin-sidebar">
-        <a class="brand" href="dashboard.html">
-            <span class="brand-mark" aria-hidden="true">B</span>
-            <span>BookNest <small>Administration</small></span>
-        </a>
-        <nav class="nav admin-nav" aria-label="Admin navigation">
-            <a class="nav-link" href="dashboard.html">Dashboard</a>
-            <a class="nav-link active" aria-current="page" href="accounts.html">Admin accounts</a>
-            <a class="nav-link" href="activity.html">Activity logs</a>
+<div class="admin-wrapper">
+    <aside class="sidebar">
+        <div class="brand">
+            <h2>BookNest</h2>
+            <span>Administration</span>
+        </div>
+        <nav aria-label="Admin navigation">
+            <a href="/admin.html#dashboard">Dashboard</a>
+            <a href="/admin.html#books">Manage Books</a>
+            <a href="/admin.html#add-book">Add New Book</a>
+            <a href="/admin.html#inventory">Inventory</a>
+            <a href="/admin/accounts.html" class="active" aria-current="page">Admin Accounts</a>
+            <a href="/admin/activity.html">Activity Logs</a>
         </nav>
+        <div class="sidebar-bottom">
+            <a href="/">Visit Store</a>
+        </div>
     </aside>
-    <header class="admin-topbar">
-        <a class="btn btn-outline-secondary btn-sm" href="/logout">Sign out</a>
-    </header>
-    <main class="admin-main" id="main-content">
-        <div class="page-heading">
+    <main class="main-content" id="main-content">
+        <header class="topbar">
             <div>
-                <h1>Admin accounts</h1>
+                <h1>Admin Accounts</h1>
                 <p>Create accounts and manage administrator roles.</p>
             </div>
-            <button id="add-admin" class="btn btn-primary" type="button" disabled>Add admin</button>
+            <div class="admin-profile">
+                <span>Super admin</span>
+                <a class="btn btn-sm admin-secondary-button" href="/logout">Sign out</a>
+                <div class="profile-icon" aria-hidden="true">A</div>
+            </div>
+        </header>
+        <div class="section-heading">
+            <button id="add-admin" class="btn admin-primary-button" type="button" disabled>Add admin</button>
         </div>
-        <div class="card table-card">
+        <div class="table-container admin-data-table">
             <div class="table-responsive" role="region" aria-label="Admin accounts" tabindex="0">
                 <table class="table table-hover align-middle accounts-table" aria-label="Admin accounts">
                     <thead>
@@ -72,8 +82,8 @@
         </label>
         <p id="form-error" class="alert alert-danger" role="alert" hidden></p>
         <div class="dialog-actions">
-            <button id="cancel-edit" class="btn btn-outline-secondary" type="button">Cancel</button>
-            <button id="save-admin" class="btn btn-primary" type="submit">Save</button>
+            <button id="cancel-edit" class="btn admin-secondary-button" type="button">Cancel</button>
+            <button id="save-admin" class="btn admin-primary-button" type="submit">Save</button>
         </div>
     </form>
 </dialog>
@@ -83,7 +93,7 @@
     <h2 id="delete-title">Delete admin account?</h2>
     <p id="delete-message"></p>
     <form method="dialog" class="dialog-actions">
-        <button class="btn btn-outline-secondary" value="cancel" autofocus>Cancel</button>
+        <button class="btn admin-secondary-button" value="cancel" autofocus>Cancel</button>
         <button class="btn btn-danger" value="delete">Delete account</button>
     </form>
 </dialog>

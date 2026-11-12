@@ -253,6 +253,82 @@
             </ul>
           </div>
         </div>
+		  <div class="row mt-5">
+    <div class="col-lg-8 offset-lg-4">
+
+        <div class="review-form-card">
+
+            <h2 class="h3 mb-3">Write a Review</h2>
+
+            <p class="text-soft">
+                Share your thoughts about this book with other readers.
+            </p>
+
+            <form id="reviewForm">
+
+                <div class="mb-3">
+                    <label for="reviewerName" class="form-label">
+                        Your Name
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="reviewerName"
+                        required
+                        maxlength="100"
+                        placeholder="Enter your name">
+                </div>
+
+                <div class="mb-3">
+                    <label for="reviewRating" class="form-label">
+                        Your Rating
+                    </label>
+
+                    <select
+                        class="form-select"
+                        id="reviewRating"
+                        required>
+
+                        <option value="">Select a rating</option>
+                        <option value="5">★★★★★ - Excellent</option>
+                        <option value="4">★★★★ - Very Good</option>
+                        <option value="3">★★★ - Good</option>
+                        <option value="2">★★ - Fair</option>
+                        <option value="1">★ - Poor</option>
+
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="reviewComment" class="form-label">
+                        Your Review
+                    </label>
+
+                    <textarea
+                        class="form-control"
+                        id="reviewComment"
+                        rows="5"
+                        required
+                        maxlength="2000"
+                        placeholder="What did you think about this book?"></textarea>
+                </div>
+
+                <div id="reviewMessage"
+                     class="mb-3"
+                     role="status"
+                     aria-live="polite"></div>
+
+                <button type="submit" class="btn btn-primary">
+                    Submit Review
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>
       </div>
     </section>
 

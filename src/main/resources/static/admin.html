@@ -13,6 +13,7 @@
 
 <body>
 
+<a class="visually-hidden-focusable skip-link" href="#main-content">Skip to content</a>
 <div class="admin-wrapper">
 
     <!-- SIDEBAR -->
@@ -23,11 +24,13 @@
             <span>Administration</span>
         </div>
 
-        <nav>
+        <nav aria-label="Admin navigation">
             <a href="#dashboard" class="active">Dashboard</a>
             <a href="#books">Manage Books</a>
             <a href="#add-book">Add New Book</a>
             <a href="#inventory">Inventory</a>
+            <a href="/admin/accounts.html" data-super-admin hidden>Admin Accounts</a>
+            <a href="/admin/activity.html" data-super-admin hidden>Activity Logs</a>
         </nav>
 
         <div class="sidebar-bottom">
@@ -38,16 +41,17 @@
 
 
     <!-- MAIN CONTENT -->
-    <main class="main-content">
+    <main class="main-content" id="main-content">
 
         <header class="topbar">
             <div>
-                <h3>Admin Dashboard</h3>
+                <h1>Admin Dashboard</h1>
                 <p>Manage your BookNest bookstore</p>
             </div>
 
             <div class="admin-profile">
-                <span>Administrator</span>
+                <span data-admin-role>Administrator</span>
+                <a class="btn btn-sm admin-secondary-button" href="/logout">Sign out</a>
                 <div class="profile-icon">A</div>
             </div>
         </header>
@@ -84,6 +88,21 @@
 
         </section>
 
+
+        <section class="content-section" aria-labelledby="account-management-heading"
+                 data-super-admin hidden>
+            <h4 id="account-management-heading">Account Management</h4>
+            <div class="admin-shortcuts">
+                <a class="stat-card admin-shortcut" href="/admin/accounts.html">
+                    <strong>Admin Accounts</strong>
+                    <span>Add, edit, and remove admin accounts.</span>
+                </a>
+                <a class="stat-card admin-shortcut" href="/admin/activity.html">
+                    <strong>Activity Logs</strong>
+                    <span>Review changes made to admin accounts.</span>
+                </a>
+            </div>
+        </section>
 
         <!-- BOOK MANAGEMENT -->
         <section id="books" class="content-section">
@@ -320,6 +339,7 @@
 </div>
 	
 <script src="js/admin.js"></script>
+<script src="/js/admin-navigation.js" defer></script>
 
 </body>
 </html>
