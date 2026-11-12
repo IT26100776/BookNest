@@ -7,8 +7,9 @@ import com.booknest.demo.ordermanagement.model.Order;
 import com.booknest.demo.ordermanagement.model.OrderItem;
 import com.booknest.demo.ordermanagement.repository.OrderFileManager;
 
-import org.springframework.stereotype.Service;
 
+import org.springframework.stereotype.Service;
+import java.util.UUID;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,13 +33,37 @@ public class OrderService {
     }
 
     // 1. Create a new order
-    public Order createOrder(String customerId,
-                             List<OrderItem> requestedItems) {
+    public Order createOrder(
+            String customerId,
+            String customerName,
+            String email,
+            String phone,
+            String deliveryAddress,
+            List<OrderItem> requestedItems) {
 
+        // Generate a guest reference when the customer is not registered
         if (customerId == null || customerId.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Customer ID cannot be empty."
-            );
+            customerId = "GUEST-" +
+                    UUID.randomUUID().toString()
+                            .substring(0, 8)
+                            .toUpperCase();
+        }
+
+// Validate guest customer details
+        if (customerName == null || customerName.isBlank()) {
+            throw new IllegalArgumentException("Customer name is required.");
+        }
+
+        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            throw new IllegalArgumentException("A valid email address is required.");
+        }
+
+        if (phone == null || phone.isBlank()) {
+            throw new IllegalArgumentException("Phone number is required.");
+        }
+
+        if (deliveryAddress == null || deliveryAddress.isBlank()) {
+            throw new IllegalArgumentException("Delivery address is required.");
         }
 
         if (requestedItems == null || requestedItems.isEmpty()) {
@@ -117,6 +142,12 @@ public class OrderService {
                 customerId,
                 validatedItems
         );
+
+// Attach guest customer details
+        newOrder.setCustomerName(customerName);
+        newOrder.setEmail(email);
+        newOrder.setPhone(phone);
+        newOrder.setDeliveryAddress(deliveryAddress);
 
         // Reduce stock and keep track of successful reductions
         List<OrderItem> reducedItems = new ArrayList<>();

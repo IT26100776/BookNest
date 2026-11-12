@@ -11,14 +11,17 @@ public class Order {
     private int orderId;
     private String customerId;
 
+    private String customerName;
+    private String email;
+    private String phone;
+    private String deliveryAddress;
+
     private List<OrderItem> items = new ArrayList<>();
 
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
     private OrderStatus status;
-
     private PaymentStatus paymentStatus;
-
     private LocalDateTime orderDate;
 
     // Default constructor
@@ -41,21 +44,16 @@ public class Order {
 
     // Calculate total amount
     public void calculateTotalAmount() {
-
         totalAmount = BigDecimal.ZERO;
 
         for (OrderItem item : items) {
-
             totalAmount = totalAmount.add(item.getSubtotal());
-
         }
     }
 
     // Add item to order
     public void addItem(OrderItem item) {
-
         items.add(item);
-
         calculateTotalAmount();
     }
 
@@ -77,14 +75,44 @@ public class Order {
         this.customerId = customerId;
     }
 
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
+    }
+
     public List<OrderItem> getItems() {
         return new ArrayList<>(items);
     }
 
     public void setItems(List<OrderItem> items) {
-
         this.items = new ArrayList<>(items);
-
         calculateTotalAmount();
     }
 

@@ -10,6 +10,7 @@ import com.booknest.demo.ordermanagement.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,18 +27,29 @@ public class OrderController {
     }
 
     // 1. Create a new order
+
+    // 1. Create a new order
     @PostMapping
-    public ResponseEntity<Order> createOrder(
+    public ResponseEntity<?> createOrder(
             @RequestBody OrderRequest request) {
 
+        // Validate the request
         if (request == null || request.getItems() == null
                 || request.getItems().isEmpty()) {
-            return ResponseEntity.badRequest().build();
+
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Your cart is empty."));
         }
 
         List<OrderItem> items = new ArrayList<>();
 
         for (var item : request.getItems()) {
+
+            if (item == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "Invalid order item."));
+            }
+
             items.add(new OrderItem(
                     item.getBookId(),
                     "",
@@ -46,12 +58,37 @@ public class OrderController {
             ));
         }
 
-        Order createdOrder = orderService.createOrder(
-                request.getCustomerId(), items);
+        try {
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(createdOrder);
+            Order createdOrder = orderService.createOrder(
+                    request.getCustomerId(),
+                    request.getCustomerName(),
+                    request.getEmail(),
+                    request.getPhone(),
+                    request.getDeliveryAddress(),
+                    items
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(createdOrder);
+
+        } catch (IllegalArgumentException e) {
+
+            // Customer input or stock validation error
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", e.getMessage()));
+
+        } catch (IllegalStateException e) {
+
+            // Unexpected order-processing or storage failure
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                            "error",
+                            "Unable to place your order. Please try again."
+                    ));
+        }
     }
+
 
     // 2. Get all orders
     @GetMapping

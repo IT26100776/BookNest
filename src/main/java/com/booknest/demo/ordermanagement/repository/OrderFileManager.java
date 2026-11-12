@@ -1,5 +1,6 @@
 package com.booknest.demo.ordermanagement.repository;
 
+
 import org.springframework.stereotype.Repository;
 
 
@@ -7,6 +8,7 @@ import com.booknest.demo.ordermanagement.model.Order;
 import com.booknest.demo.ordermanagement.model.OrderItem;
 import com.booknest.demo.ordermanagement.model.OrderStatus;
 import com.booknest.demo.ordermanagement.model.PaymentStatus;
+
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -140,6 +142,7 @@ public class OrderFileManager {
     }
 
     // Convert an Order object into a text record
+
     private String formatOrder(Order order) {
 
         StringBuilder itemData = new StringBuilder();
@@ -152,8 +155,7 @@ public class OrderFileManager {
 
             String encodedTitle = Base64.getEncoder()
                     .encodeToString(
-                            item.getBookTitle()
-                                    .getBytes(StandardCharsets.UTF_8)
+                            item.getBookTitle().getBytes(StandardCharsets.UTF_8)
                     );
 
             itemData.append(item.getBookId()).append(",")
@@ -164,6 +166,10 @@ public class OrderFileManager {
 
         return order.getOrderId() + "|"
                 + order.getCustomerId() + "|"
+                + encodeField(order.getCustomerName()) + "|"
+                + encodeField(order.getEmail()) + "|"
+                + encodeField(order.getPhone()) + "|"
+                + encodeField(order.getDeliveryAddress()) + "|"
                 + order.getStatus().name() + "|"
                 + order.getPaymentStatus().name() + "|"
                 + order.getOrderDate() + "|"
@@ -171,87 +177,82 @@ public class OrderFileManager {
                 + itemData;
     }
 
+    private String encodeField(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        return Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(value.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private String decodeField(String value) {
+        if (value == null || value.isEmpty()) {
+            return "";
+        }
+
+        return new String(
+                Base64.getUrlDecoder().decode(value),
+                StandardCharsets.UTF_8
+        );
+    }
+
+
     // Convert a text record back into an Order object
+
     private Order parseOrder(String line) throws IOException {
 
         try {
 
             String[] data = line.split("\\|", -1);
 
-            if (data.length != 7) {
-                throw new IllegalArgumentException(
-                        "Invalid order record"
-                );
-            }
-
-            int orderId = Integer.parseInt(data[0]);
-            String customerId = data[1];
-
-            OrderStatus status =
-                    OrderStatus.valueOf(data[2]);
-
-            PaymentStatus paymentStatus =
-                    PaymentStatus.valueOf(data[3]);
-
-            LocalDateTime orderDate =
-                    LocalDateTime.parse(data[4]);
-
-            BigDecimal storedTotal =
-                    new BigDecimal(data[5]);
-
-            List<OrderItem> items = new ArrayList<>();
-
-            if (!data[6].isEmpty()) {
-
-                String[] itemRecords = data[6].split(";");
-
-                for (String record : itemRecords) {
-
-                    String[] itemData = record.split(",", -1);
-
-                    if (itemData.length != 4) {
-                        throw new IllegalArgumentException(
-                                "Invalid order item"
-                        );
-                    }
-
-                    int bookId =
-                            Integer.parseInt(itemData[0]);
-
-                    int quantity =
-                            Integer.parseInt(itemData[1]);
-
-                    BigDecimal unitPrice =
-                            new BigDecimal(itemData[2]);
-
-                    String title =
-                            new String(
-                                    Base64.getDecoder().decode(itemData[3]),
-                                    StandardCharsets.UTF_8
-                            );
-
-                    items.add(new OrderItem(
-                            bookId,
-                            title,
-                            quantity,
-                            unitPrice
-                    ));
-                }
-            }
-
             Order order = new Order();
 
-            order.setOrderId(orderId);
-            order.setCustomerId(customerId);
-            order.setItems(items);
-            order.setStatus(status);
-            order.setPaymentStatus(paymentStatus);
-            order.setOrderDate(orderDate);
+            if (data.length == 7) {
+                // Backward compatibility with older order records
 
-            if (order.getTotalAmount().compareTo(storedTotal) != 0) {
-                throw new IllegalArgumentException(
-                        "Order total does not match its items"
-                );
+                order.setOrderId(Integer.parseInt(data[0]));
+                order.setCustomerId(data[1]);
+                order.setStatus(OrderStatus.valueOf(data[2]));
+                order.setPaymentStatus(PaymentStatus.valueOf(data[3]));
+                order.setOrderDate(LocalDateTime.parse(data[4]));
+
+                parseItems(data[6], order);
+
+                BigDecimal storedTotal = new BigDecimal(data[5]);
+
+                if (order.getTotalAmount().compareTo(storedTotal) != 0) {
+                    throw new IllegalArgumentException(
+                            "Order total does not match its items"
+                    );
+                }
+
+            } else if (data.length == 11) {
+                // New order records with guest customer details
+
+                order.setOrderId(Integer.parseInt(data[0]));
+                order.setCustomerId(data[1]);
+                order.setCustomerName(decodeField(data[2]));
+                order.setEmail(decodeField(data[3]));
+                order.setPhone(decodeField(data[4]));
+                order.setDeliveryAddress(decodeField(data[5]));
+                order.setStatus(OrderStatus.valueOf(data[6]));
+                order.setPaymentStatus(PaymentStatus.valueOf(data[7]));
+                order.setOrderDate(LocalDateTime.parse(data[8]));
+
+                parseItems(data[10], order);
+
+                BigDecimal storedTotal = new BigDecimal(data[9]);
+
+                if (order.getTotalAmount().compareTo(storedTotal) != 0) {
+                    throw new IllegalArgumentException(
+                            "Order total does not match its items"
+                    );
+                }
+
+            } else {
+                throw new IllegalArgumentException("Invalid order record");
             }
 
             return order;
@@ -264,4 +265,42 @@ public class OrderFileManager {
             );
         }
     }
+
+    private void parseItems(String itemData, Order order) {
+
+        List<OrderItem> items = new ArrayList<>();
+
+        if (!itemData.isEmpty()) {
+
+            String[] itemRecords = itemData.split(";");
+
+            for (String record : itemRecords) {
+
+                String[] fields = record.split(",", -1);
+
+                if (fields.length != 4) {
+                    throw new IllegalArgumentException("Invalid order item");
+                }
+
+                int bookId = Integer.parseInt(fields[0]);
+                int quantity = Integer.parseInt(fields[1]);
+                BigDecimal unitPrice = new BigDecimal(fields[2]);
+
+                String title = new String(
+                        Base64.getDecoder().decode(fields[3]),
+                        StandardCharsets.UTF_8
+                );
+
+                items.add(new OrderItem(
+                        bookId,
+                        title,
+                        quantity,
+                        unitPrice
+                ));
+            }
+        }
+
+        order.setItems(items);
+    }
+
 }
