@@ -3,6 +3,7 @@ package com.booknest.demo;
 import com.booknest.demo.admin.model.AdminUser;
 import com.booknest.demo.admin.service.AdminManager;
 import com.booknest.demo.admin.service.AdminUserDetailsService.AdminPrincipal;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,11 +36,16 @@ public class SecurityConfig {
             throws Exception {
         http.addFilterBefore(new AdminSessionFilter(adminManager), AuthorizationFilter.class)
                 .authorizeHttpRequests(auth -> auth
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/", "/index.html", "/shop.html",
+                                "/book.html", "/css/**", "/img/**", "/js/main.js", "/js/vendor/**")
+                        .permitAll()
                         .requestMatchers("/admin/accounts.html", "/admin/accounts.js",
                                 "/admin/activity.html", "/admin/activity.js",
                                 "/api/admin/activity", "/api/admin/admins", "/api/admin/admins/**")
                         .hasRole("SUPER_ADMIN")
-                        .requestMatchers("/admin/dashboard.html", "/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/dashboard.html", "/admin.html", "/js/admin.js",
+                                "/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/books", "/api/books/**")
                         .permitAll()
                         .requestMatchers("/api/books", "/api/books/**").hasRole("ADMIN")

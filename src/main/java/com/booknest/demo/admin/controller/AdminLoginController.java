@@ -53,7 +53,7 @@ public class AdminLoginController {
         return Map.of("username", principal.getName());
     }
 
-    @GetMapping("/admins/csrf")
+    @GetMapping({"/admins/csrf", "/csrf"})
     public Map<String, String> adminCsrfToken(CsrfToken csrfToken) {
         // Give the admin page the token it needs for write requests.
         return Map.of("headerName", csrfToken.getHeaderName(), "token", csrfToken.getToken());

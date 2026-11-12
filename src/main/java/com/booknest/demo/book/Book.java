@@ -20,7 +20,7 @@ public class Book {
     public Book() {
     }
 
-    public Book(int id, String title, String author,
+    public Book(Integer id, String title, String author,
                 String isbn, BigDecimal price, int stockQuantity, int pages, String publisher, String genre, String language) {
         this.id = id;
         this.title = title;
