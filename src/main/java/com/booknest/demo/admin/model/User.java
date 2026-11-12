@@ -7,10 +7,6 @@ public abstract class User {
     private String password;
     private String email;
 
-    //Default constructor
-    public User() {
-    }
-
     //Constructor with account details
     public User(String userId, String username, String password, String email) {
         this.userId = userId;
@@ -34,23 +30,6 @@ public abstract class User {
 
     public String getEmail() {
         return email;
-    }
-
-    //Setters
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     //Each account type describes its role
