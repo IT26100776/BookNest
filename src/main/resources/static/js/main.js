@@ -960,7 +960,7 @@ try {
         : 0;
 	// Update the book's actual rating data
 book.rating = average;
-book.reviews (http://book.reviews/) = count;
+book.reviews = count;
 
     // Update review summary
     const ratingEl = $('[data-b="rating"]', root);
