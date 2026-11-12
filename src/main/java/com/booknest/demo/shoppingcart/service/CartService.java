@@ -3,9 +3,12 @@ package com.booknest.demo.shoppingcart.service;
 
 import com.booknest.demo.book.BookService;
 import com.booknest.demo.shoppingcart.Cart;
+import com.booknest.demo.shoppingcart.CartFileManager;
 import com.booknest.demo.shoppingcart.CartItem;
+import com.booknest.demo.book.Book;
 
 import org.springframework.stereotype.Service;
+import com.booknest.demo.shoppingcart.CartFileManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +17,8 @@ import java.util.List;
 public class CartService {
 
     private final BookService bookService;
+    private final CartFileManager cartFileManager =
+            new CartFileManager();
 
     public CartService(BookService bookService) {
         this.bookService = bookService;
@@ -43,7 +48,7 @@ public class CartService {
         }
 
         // Check whether the book exists
-        bookService.getBookById(bookId)
+        Book book = bookService.getBookById(bookId)
                 .orElseThrow(() ->
                         new IllegalArgumentException(
                                 "Book with ID " + bookId
@@ -51,8 +56,24 @@ public class CartService {
                         )
                 );
 
+// Load the customer's existing cart
         Cart cart = new Cart(customerId);
 
+// Find the existing quantity of this book
+        int currentQuantity = cart.getItems().stream()
+                .filter(item -> item.getBookId() == bookId)
+                .mapToInt(CartItem::getQuantity)
+                .findFirst()
+                .orElse(0);
+
+// Validate available stock
+        if (currentQuantity + quantity > book.getStockQuantity()) {
+            throw new IllegalArgumentException(
+                    "Insufficient stock for: " + book.getTitle()
+            );
+        }
+
+// Add the book
         cart.addItem(bookId, quantity);
 
         return cart;
@@ -66,12 +87,37 @@ public class CartService {
 
         validateCustomerId(customerId);
 
+        // Check whether the book exists
+        Book book = bookService.getBookById(bookId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Book with ID " + bookId + " was not found."
+                        )
+                );
+
+        // Validate requested quantity
+        if (quantity <= 0) {
+            throw new IllegalArgumentException(
+                    "Quantity must be greater than zero."
+            );
+        }
+
+        // Check available stock
+        if (quantity > book.getStockQuantity()) {
+            throw new IllegalArgumentException(
+                    "Insufficient stock for: " + book.getTitle()
+            );
+        }
+
+        // Load customer's cart
         Cart cart = new Cart(customerId);
 
+        // Update quantity
         cart.updateQuantity(bookId, quantity);
 
         return cart;
     }
+
 
     // Remove a book from cart
     public Cart removeItem(
@@ -87,6 +133,7 @@ public class CartService {
         return cart;
     }
 
+    // Clear customer's cart
     // Clear customer's cart
     public void clearCart(String customerId)
             throws IOException {

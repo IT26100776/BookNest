@@ -52,15 +52,23 @@ public class SecurityConfig {
                                 "/api/admin/activity", "/api/admin/admins", "/api/admin/admins/**")
                         .hasRole("SUPER_ADMIN")
                         .requestMatchers("/admin/dashboard.html", "/admin.html", "/js/admin.js",
-                                "/js/admin-navigation.js", "/api/admin/**").hasRole("ADMIN")
+                                "/js/admin-navigation.js")
+                        .hasAnyRole("ADMIN", "SUPER_ADMIN")
+
+                        .requestMatchers("/api/admin/**")
+                        .hasAnyRole("ADMIN", "SUPER_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/books", "/api/books/**")
                         .permitAll()
-                        .requestMatchers("/api/books", "/api/books/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/orders/*/status").hasRole("ADMIN")
+
+                        .requestMatchers("/api/books", "/api/books/**")
+                        .hasAnyRole("ADMIN", "SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/orders/*/status")
+                        .hasAnyRole("ADMIN", "SUPER_ADMIN")
                         .requestMatchers("/api/orders", "/api/orders/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews", "/api/reviews/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/reviews").permitAll()
+                        .requestMatchers("/api/cart/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults());
 

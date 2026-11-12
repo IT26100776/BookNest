@@ -6,18 +6,26 @@
 
 const API_URL = "/api/books";
 
+
 async function bookWriteHeaders() {
-    const response = await fetch("/api/admin/csrf");
-    if (!response.ok || response.redirected) {
-        throw new Error("Sign in as an admin before changing books.");
+    const csrfCookie = document.cookie
+        .split("; ")
+        .find(row => row.startsWith("XSRF-TOKEN="));
+
+    if (!csrfCookie) {
+        throw new Error("CSRF token not found. Please refresh the page and try again.");
     }
 
-    const { headerName, token } = await response.json();
+    const csrfToken = decodeURIComponent(
+        csrfCookie.substring("XSRF-TOKEN=".length)
+    );
+
     return {
         "Content-Type": "application/json",
-        [headerName]: token
+        "X-XSRF-TOKEN": csrfToken
     };
 }
+
 
 // Get HTML elements
 const totalBooksElement = document.getElementById("totalBooks");
