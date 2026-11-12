@@ -4,7 +4,20 @@
 // Load real book data from Spring Boot API
 // ==========================================
 
-const API_URL = "http://localhost:8080/api/books";
+const API_URL = "/api/books";
+
+async function bookWriteHeaders() {
+    const response = await fetch("/api/admin/csrf");
+    if (!response.ok || response.redirected) {
+        throw new Error("Sign in as an admin before changing books.");
+    }
+
+    const { headerName, token } = await response.json();
+    return {
+        "Content-Type": "application/json",
+        [headerName]: token
+    };
+}
 
 // Get HTML elements
 const totalBooksElement = document.getElementById("totalBooks");
@@ -238,9 +251,7 @@ if (addBookForm) {
 
                 method: "POST",
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: await bookWriteHeaders(),
 
                 body: JSON.stringify(book)
 
@@ -347,9 +358,7 @@ editBookForm.addEventListener("submit", async function(event) {
 
             method: "PUT",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: await bookWriteHeaders(),
 
             body: JSON.stringify(updatedBook)
 
@@ -489,7 +498,8 @@ bookTableBody.addEventListener("click", async function(event) {
 
         const response = await fetch(API_URL + "/" + bookId, {
 
-            method: "DELETE"
+            method: "DELETE",
+            headers: await bookWriteHeaders()
 
         });
 

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Activity logs | BookNest Admin</title>
+    <link rel="stylesheet" href="vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <script src="activity.js" defer></script>
+</head>
+<body>
+<a class="visually-hidden-focusable skip-link" href="#main-content">Skip to content</a>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <a class="brand" href="dashboard.html">
+            <span class="brand-mark" aria-hidden="true">B</span>
+            <span>BookNest <small>Administration</small></span>
+        </a>
+        <nav class="nav admin-nav" aria-label="Admin navigation">
+            <a class="nav-link" href="dashboard.html">Dashboard</a>
+            <a class="nav-link" href="accounts.html">Admin accounts</a>
+            <a class="nav-link active" aria-current="page" href="activity.html">Activity logs</a>
+        </nav>
+    </aside>
+    <header class="admin-topbar">
+        <a class="btn btn-outline-secondary btn-sm" href="/logout">Sign out</a>
+    </header>
+    <main class="admin-main" id="main-content">
+        <div class="page-heading">
+            <div>
+                <h1>Activity logs</h1>
+                <p>Review account changes and see who made them.</p>
+            </div>
+            <button id="refresh-activity" class="btn btn-outline-secondary" type="button">Refresh</button>
+        </div>
+        <div class="card table-card">
+            <div class="table-responsive" role="region" aria-label="Admin account activity" tabindex="0">
+                <table class="table table-hover align-middle activity-table" aria-label="Admin account activity">
+                    <thead>
+                    <tr>
+                        <th scope="col">Date and time</th>
+                        <th scope="col">Action</th>
+                        <th scope="col">Performed by</th>
+                        <th scope="col">Account ID</th>
+                    </tr>
+                    </thead>
+                    <tbody id="activity-rows"></tbody>
+                </table>
+            </div>
+            <p class="table-status" id="activity-status" role="status" aria-live="polite">Loading activity…</p>
+        </div>
+    </main>
+</div>
+</body>
+</html>
