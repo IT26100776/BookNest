@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>document.documentElement.classList.add('js')</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BookNest Bookstore - Get any book you want ASAP</title>
+  <meta name="description" content="Folio &amp; Fern Booksellers: an independent bookshop on Main Street with new releases, staff picks, author events, a monthly book club and a shop you can browse online.">
+  <meta name="theme-color" content="#f5eee1">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect width='44' height='44' rx='12' fill='%237b1e2c'/%3E%3Cpath d='M8 26.5c4.6-2 9.3-1.8 14 .8 4.7-2.6 9.4-2.8 14-.8v7c-4.6-2-9.3-1.8-14 .8-4.7-2.6-9.4-2.8-14-.8Z M22 26.6c-.2-6.2 1-11.6 4-16.4' fill='none' stroke='%23f5eee1' stroke-width='2'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ============================ ANNOUNCEMENT ============================ -->
+  <aside class="announce" aria-label="Shop news">
+    <div class="container">
+      <p>Free delivery on orders over Rs.5000<span class="sep" aria-hidden="true">&#10086;</span><a href="#events">Enjoy 20% discount for your first 3 books.</a></p>
+    </div>
+  </aside>
+
+  <!-- ============================ HEADER ============================ -->
+  <header class="site-header" data-header>
+    <nav class="navbar navbar-expand-lg" aria-label="Main">
+      <div class="container">
+        <a class="brand" href="index.html" aria-label="Folio &amp; Fern Booksellers, home">
+          <svg class="brand-mark" viewBox="0 0 44 44" aria-hidden="true">
+            <rect width="44" height="44" rx="12" fill="#7b1e2c"/>
+            <g fill="none" stroke="#f5eee1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 26.5c4.6-2 9.3-1.8 14 .8 4.7-2.6 9.4-2.8 14-.8v7c-4.6-2-9.3-1.8-14 .8-4.7-2.6-9.4-2.8-14-.8Z"/>
+              <path d="M22 27.3v7"/>
+              <path d="M22 26.6c-.2-6.2 1-11.6 4-16.4"/>
+            </g>
+            <g fill="#a9bb9c">
+              <ellipse cx="19.1" cy="21.6" rx="3.1" ry="1.25" transform="rotate(-28 19.1 21.6)"/>
+              <ellipse cx="25.6" cy="20.2" rx="3.1" ry="1.25" transform="rotate(22 25.6 20.2)"/>
+              <ellipse cx="20.4" cy="16.9" rx="2.7" ry="1.1" transform="rotate(-34 20.4 16.9)"/>
+              <ellipse cx="26.4" cy="15.4" rx="2.5" ry="1.05" transform="rotate(18 26.4 15.4)"/>
+              <ellipse cx="22.6" cy="12.6" rx="2.1" ry=".95" transform="rotate(-40 22.6 12.6)"/>
+            </g>
+          </svg>
+          <span>
+            <span class="brand-name">BookNest</span>
+            <span class="brand-sub">Booksellers</span>
+          </span>
+        </a>
+
+        <div class="header-actions order-lg-last">
+          <button class="cart-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#cart" aria-controls="cart" aria-label="Open basket, 0 items" data-cart-button>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+            <span class="cart-count is-empty" data-cart-count aria-hidden="true">0</span>
+          </button>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="toggler-bar"></span>
+            <span class="toggler-bar"></span>
+            <span class="toggler-bar"></span>
+          </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="main-nav">
+          <ul class="navbar-nav mx-lg-auto">
+            <li class="nav-item"><a class="nav-link" href="shop.html">Shop</a></li>
+            <li class="nav-item"><a class="nav-link" href="#new">New releases</a></li>
+            <li class="nav-item"><a class="nav-link" href="#events">Events</a></li>
+            <li class="nav-item"><a class="nav-link" href="#book-club">Book club</a></li>
+            <li class="nav-item"><a class="nav-link" href="#visit">Visit</a></li>
+          </ul>
+          <form class="nav-search" action="shop.html" method="get" role="search">
+            <label class="visually-hidden" for="nav-q">Search books</label>
+            <input id="nav-q" name="q" type="search" placeholder="Title or author" autocomplete="off">
+            <button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+          </form>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ============================ HERO ============================ -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container">
+        <div class="row align-items-center gy-5 gx-lg-5">
+          <div class="col-lg-6">
+            <p class="eyebrow">Independent booksellers since 2000</p>
+            <h1 class="hero-title" id="hero-title">Good books, chosen by people who <span class="scribble"><em>read</em><svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 9.5C45 3.5 102 2.6 197 7.8" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></span> them.</h1>
+            <p class="hero-lead">Eleven thousand books over three creaky floors, a reading room upstairs and six booksellers who will happily talk you out of the bestseller and into something better.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary btn-lg" href="shop.html">Browse the shop <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <a class="btn btn-outline-ink btn-lg" href="#events">This month&rsquo;s events</a>
+            </div>
+            <a class="club-strip" href="#book-club">
+              <div data-cover="the-lantern-keepers" class="cover cover--arch " data-f="serif" style="--bg:#1f3a4d;--fg:#f4ead5;--ac:#e3aa3f;--ts:13.00cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Novel</span><span class="cover-title"><span>The</span> <span>Lantern</span> <span>Keepers</span></span><span class="cover-author">Ada Merriweather</span></span></div>
+              <span>
+                <span class="club-strip-label d-block">October book club read</span>
+                <span class="club-strip-title d-block">The Lantern Keepers <span>by Ada Merriweather</span></span>
+                <span class="club-strip-meta d-block">Tuesday 6 October, 7pm &middot; members save 15%</span>
+              </span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="hero-visual">
+              <figure class="hero-photo m-0">
+                <img src="img/hero.jpg" alt="A wooden library ladder leaning against floor-to-ceiling shelves of books" width="1000" height="1250" fetchpriority="high">
+              </figure>
+              <svg class="hero-stamp" viewBox="0 0 120 120" aria-hidden="true">
+                <circle cx="60" cy="60" r="58" fill="#fffdf6"/>
+                <circle cx="60" cy="60" r="51" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="1.5 3"/>
+                <defs><path id="stamp-ring" d="M60 60m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0"/></defs>
+                <text font-family="Instrument Sans, sans-serif" font-size="10" font-weight="700" letter-spacing="2" fill="currentColor"><textPath href="#stamp-ring" textLength="252" lengthAdjust="spacing">&nbsp;</textPath>
+                </text>
+                <text x="60" y="57" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-size="14" fill="currentColor">&nbsp;</text>
+                <text x="60" y="73" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-size="14" fill="currentColor">&nbsp;</text>
+              </svg>
+
+              <article class="hero-pick" aria-labelledby="hero-pick-title">
+                <p class="hero-pick-label"><span class="avatar avatar--sm avatar--rose" aria-hidden="true">HB</span> Hattie&rsquo;s pick this week</p>
+                <div class="hero-pick-body">
+                  <a class="hero-pick-cover" href="book.html?id=the-salt-orchard" tabindex="-1" aria-hidden="true"><div data-cover="the-salt-orchard" class="cover cover--sun " data-f="italic" style="--bg:#eadcc2;--fg:#2a211c;--ac:#c4553a;--ts:13.00cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Novel</span><span class="cover-title"><span>The</span> <span>Salt</span> <span>Orchard</span></span><span class="cover-author">Iris Vantongeren</span></span></div></a>
+                  <div>
+                    <h2 class="hero-pick-title" id="hero-pick-title"><a href="book.html?id=the-salt-orchard">The Salt Orchard</a></h2>
+                    <p class="hero-pick-author">Iris Vantongeren</p>
+                    <p class="note-quote">&ldquo;I missed my bus stop twice reading this. The orchard chapters smell of rain.&rdquo;</p>
+                    <div class="hero-pick-foot">
+                      <span class="price">$16.99</span>
+                      <button type="button" class="btn btn-primary btn-sm" data-add="the-salt-orchard" data-format="pb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg> Add to basket<span class="visually-hidden">: The Salt Orchard, paperback</span></button>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ SERVICES ============================ -->
+    <section class="services" aria-label="Shop services">
+      <div class="container">
+        <ul class="services-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6.5h11v9.5h-11zM13.5 10h4.2l3.3 3.3V16h-7.5"/><circle cx="6.5" cy="17.5" r="1.9"/><circle cx="17" cy="17.5" r="1.9"/></svg><span><strong>Free delivery</strong>On orders over Rs.5000</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg><span><strong>Special orders</strong>Most books in 48 hours</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4.5" rx="1"/><path d="M5 12.5V20h14v-7.5M12 8v12"/><path d="M12 8C10.5 4.8 6.8 4 6.6 6.4 6.4 8 9.8 8 12 8Zm0 0c1.5-3.2 5.2-4 5.4-1.6C17.6 8 14.2 8 12 8Z"/></svg><span><strong>Gift wrapping</strong>Free, in brown paper and string</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 4C12.5 4 6.5 9 5.2 18.8"/><path d="M5.2 18.8C11.5 18.4 16.6 14.6 18 8"/><path d="M4 20l1.2-1.2M9 14.5h6"/></svg><span><strong>Signed copies</strong>From every author event</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================ NEW RELEASES ============================ -->
+    <section class="section" id="new" aria-labelledby="new-title">
+      <div class="container">
+        <div class="section-head section-head--row reveal">
+          <div>
+            <p class="eyebrow">Just in</p>
+            <h2 class="section-title" id="new-title">New on the front table</h2>
+            <p class="section-lead">Fresh out of the boxes this month, unpacked, read and argued over by the staff before they reach the shelves.</p>
+          </div>
+          <div class="shelf-nav">
+            <button type="button" class="shelf-btn" data-shelf-prev aria-controls="new-track" aria-label="Scroll new releases back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+            <button type="button" class="shelf-btn" data-shelf-next aria-controls="new-track" aria-label="Scroll new releases forward"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            <a class="link-arrow" href="shop.html?sort=newest">All new releases <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="shelf" data-shelf>
+        <div class="shelf-track" id="new-track" data-shelf-track tabindex="0" role="region" aria-label="New releases, scrolls sideways">
+          <ul class="shelf-list">
+            <li class="shelf-item" style="--s:1.04">
+      <a class="shelf-cover" href="book.html?id=the-lantern-keepers" tabindex="-1" aria-hidden="true"><div data-cover="the-lantern-keepers" class="cover cover--arch " data-f="serif" style="--bg:#1f3a4d;--fg:#f4ead5;--ac:#e3aa3f;--ts:13.00cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Novel</span><span class="cover-title"><span>The</span> <span>Lantern</span> <span>Keepers</span></span><span class="cover-author">Ada Merriweather</span></span></div></a>
+      <h3 class="shelf-title"><a href="book.html?id=the-lantern-keepers">The Lantern Keepers</a></h3>
+      <p class="shelf-author">Ada Merriweather</p>
+      <div class="shelf-foot">
+        <span class="shelf-price">$17.00</span>
+        <button type="button" class="btn-add btn-add--sm" data-add="the-lantern-keepers" data-format="pb" aria-label="Add The Lantern Keepers, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg></button>
+      </div>
+    </li>
+            <li class="shelf-item" style="--s:0.96">
+      <a class="shelf-cover" href="book.html?id=orbit-of-small-things" tabindex="-1" aria-hidden="true"><div data-cover="orbit-of-small-things" class="cover cover--orbit " data-f="wide" style="--bg:#141a33;--fg:#efe8ff;--ac:#f2c14e;--ts:11.00cqi;--a2:#9aa7d9;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Novel</span><span class="cover-title"><span>Orbit</span> <span>of</span> <span>Small</span> <span>Things</span></span><span class="cover-author">Kenji Harlowe</span></span></div></a>
+      <h3 class="shelf-title"><a href="book.html?id=orbit-of-small-things">Orbit of Small Things</a></h3>
+      <p class="shelf-author">Kenji Harlowe</p>
+      <div class="shelf-foot">
+        <span class="shelf-price">$17.99</span>
+        <button type="button" class="btn-add btn-add--sm" data-add="orbit-of-small-things" data-format="pb" aria-label="Add Orbit of Small Things, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg></button>
+      </div>
+    </li>
+            <li class="shelf-item" style="--s:1.03">
+      <a class="shelf-cover" href="book.html?id=the-salt-orchard" tabindex="-1" aria-hidden="true"><div data-cover="the-salt-orchard" class="cover cover--sun " data-f="italic" style="--bg:#eadcc2;--fg:#2a211c;--ac:#c4553a;--ts:13.00cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Novel</span><span class="cover-title"><span>The</span> <span>Salt</span> <span>Orchard</span></span><span class="cover-author">Iris Vantongeren</span></span></div></a>
+      <h3 class="shelf-title"><a href="book.html?id=the-salt-orchard">The Salt Orchard</a></h3>
+      <p class="shelf-author">Iris Vantongeren</p>
+      <div class="shelf-foot">
+        <span class="shelf-price">$16.99</span>
+        <button type="button" class="btn-add btn-add--sm" data-add="the-salt-orchard" data-format="pb" aria-label="Add The Salt Orchard, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg></button>
+      </div>
+    </li>
+            <li class="shelf-item" style="--s:0.95">
+      <a class="shelf-cover" href="book.html?id=pip-and-the-paper-moon" tabindex="-1" aria-hidden="true"><div data-cover="pip-and-the-paper-moon" class="cover cover--blob " data-f="black" style="--bg:#9cc3d5;--fg:#1d2d4f;--ac:#f3d98b;--ts:13.00cqi;--a2:#e8b4a6;--a3:#fff6e0;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-title"><span>Pip</span> <span>and</span> <span>the</span> <span>Paper</span> <span>Moon</span></span><span class="cover-author">Hazel Ottaway</span></span></div></a>
+      <h3 class="shelf-title"><a href="book.html?id=pip-and-the-paper-moon">Pip and the Paper Moon</a></h3>
+      <p class="shelf-author">Hazel Ottaway</p>
+      <div class="shelf-foot">
+        <span class="shelf-price">$7.99</span>
+        <button type="button" class="btn-add btn-add--sm" data-add="pip-and-the-paper-moon" data-format="pb" aria-label="Add Pip and the Paper Moon, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg></button>
+      </div>
+    </li>
+            <li class="shelf-item" style="--s:0.98">
+      <a class="shelf-cover" href="book.html?id=the-glasshouse-murders" tabindex="-1" aria-hidden="true"><div data-cover="the-glasshouse-murders" class="cover cover--grid " data-f="sans" style="--bg:#1f4e5a;--fg:#f6efe1;--ac:#cfe3d4;--ts:13.00cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Mystery</span><span class="cover-title"><span>The</span> <span>Glasshouse</span> <span>Murders</span></span><span class="cover-author">Rupert Lomax</span></span></div></a>
+      <h3 class="shelf-title"><a href="book.html?id=the-glasshouse-murders">The Glasshouse Murders</a></h3>
+      <p class="shelf-author">Rupert Lomax</p>
+      <div class="shelf-foot">
+        <span class="shelf-price">$15.99</span>
+        <button type="button" class="btn-add btn-add--sm" data-add="the-glasshouse-murders" data-format="pb" aria-label="Add The Glasshouse Murders, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg></button>
+      </div>
+    </li>
+            <li class="shelf-item" style="--s:0.92">
+      <a class="shelf-cover" href="book.html?id=weather-for-beginners" tabindex="-1" aria-hidden="true"><div data-cover="weather-for-beginners" class="cover cover--line " data-f="italic" style="--bg:#9cc3d5;--fg:#1d2d4f;--ac:#1d2d4f;--ts:10.50cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">Poems</span><span class="cover-title"><span>Weather</span> <span>for</span> <span>Beginners</span></span><span class="cover-author">Saoirse Blunt</span></span></div></a>
+      <h3 class="shelf-title"><a href="book.html?id=weather-for-beginners">Weather for Beginners</a></h3>
+      <p class="shelf-author">Saoirse Blunt</p>
+      <div class="shelf-foot">
+        <span class="shelf-price">$12.99</span>
+        <button type="button" class="btn-add btn-add--sm" data-add="weather-for-beginners" data-format="pb" aria-label="Add Weather for Beginners, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg></button>
+      </div>
+    </li>
+            <li class="shelf-item" style="--s:0.98">
+      <a class="shelf-cover" href="book.html?id=small-hours-at-the-blue-cafe" tabindex="-1" aria-hidden="true"><div data-cover="small-hours-at-the-blue-cafe" class="cover cover--dots " data-f="sans" style="--bg:#243b6b;--fg:#f6efe1;--ac:#e8b4a6;--ts:13.00cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Novel</span><span class="cover-title"><span>Small</span> <span>Hours</span> <span>at</span> <span>the</span> <span>Blue</span> <span>Café</span></span><span class="cover-author">Noor Castellane</span></span></div></a>
+      <h3 class="shelf-title"><a href="book.html?id=small-hours-at-the-blue-cafe">Small Hours at the Blue Café</a></h3>
+      <p class="shelf-author">Noor Castellane</p>
+      <div class="shelf-foot">
+        <span class="shelf-price">$16.00</span>
+        <button type="button" class="btn-add btn-add--sm" data-add="small-hours-at-the-blue-cafe" data-format="pb" aria-label="Add Small Hours at the Blue Café, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg></button>
+      </div>
+    </li>
+            <li class="shelf-item" style="--s:1.00">
+      <a class="shelf-cover" href="book.html?id=moss-stone-and-starlight" tabindex="-1" aria-hidden="true"><div data-cover="moss-stone-and-starlight" class="cover cover--peaks " data-f="serif" style="--bg:#141a33;--fg:#f2e9d0;--ac:#3d5a45;--ts:13.00cqi;--a2:#5d7a5a;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-title"><span>Moss,</span> <span>Stone</span> <span>&amp;</span> <span>Starlight</span></span><span class="cover-author">Leif Andersen-Hart</span></span></div></a>
+      <h3 class="shelf-title"><a href="book.html?id=moss-stone-and-starlight">Moss, Stone &amp; Starlight</a></h3>
+      <p class="shelf-author">Leif Andersen-Hart</p>
+      <div class="shelf-foot">
+        <span class="shelf-price">$16.99</span>
+        <button type="button" class="btn-add btn-add--sm" data-add="moss-stone-and-starlight" data-format="pb" aria-label="Add Moss, Stone &amp; Starlight, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg></button>
+      </div>
+    </li>
+            <li class="shelf-item" style="--s:1.02">
+      <a class="shelf-cover" href="book.html?id=tidal-hymns" tabindex="-1" aria-hidden="true"><div data-cover="tidal-hymns" class="cover cover--waves " data-f="serif" style="--bg:#e9dcc3;--fg:#1f4e5a;--ac:#1f4e5a;--ts:13.00cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">Poems</span><span class="cover-title"><span>Tidal</span> <span>Hymns</span></span><span class="cover-author">Amadou Kessler</span></span></div></a>
+      <h3 class="shelf-title"><a href="book.html?id=tidal-hymns">Tidal Hymns</a></h3>
+      <p class="shelf-author">Amadou Kessler</p>
+      <div class="shelf-foot">
+        <span class="shelf-price">$13.99</span>
+        <button type="button" class="btn-add btn-add--sm" data-add="tidal-hymns" data-format="pb" aria-label="Add Tidal Hymns, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg></button>
+      </div>
+    </li>
+            <li class="shelf-item" style="--s:1.02">
+      <a class="shelf-cover" href="book.html?id=signal-from-lark-station" tabindex="-1" aria-hidden="true"><div data-cover="signal-from-lark-station" class="cover cover--signal " data-f="sans" style="--bg:#e8e1d0;--fg:#1e1916;--ac:#d7372f;--ts:13.00cqi;--a2:#243b6b;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Novel</span><span class="cover-title"><span>Signal</span> <span>from</span> <span>Lark</span> <span>Station</span></span><span class="cover-author">Mina Solberg</span></span></div></a>
+      <h3 class="shelf-title"><a href="book.html?id=signal-from-lark-station">Signal from Lark Station</a></h3>
+      <p class="shelf-author">Mina Solberg</p>
+      <div class="shelf-foot">
+        <span class="shelf-price">$15.99</span>
+        <button type="button" class="btn-add btn-add--sm" data-add="signal-from-lark-station" data-format="pb" aria-label="Add Signal from Lark Station, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg></button>
+      </div>
+    </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ GENRES ============================ -->
+    <section class="section section--paper2" id="genres" aria-labelledby="genres-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Browse by genre</p>
+          <h2 class="section-title" id="genres-title">Wander the shelves from home</h2>
+          <p class="section-lead">The shop is arranged the way readers think, not the way publishers sell. Start with a room and see where it takes you.</p>
+        </div>
+        <div class="genre-grid">
+          <a class="genre-tile reveal" href="shop.html?genre=fiction" style="--tile:#7b1e2c;--tile-fg:#f5eee1;--s1:#e3aa3f;--s2:#f5eee1;--s3:#93a687">
+            <span class="genre-name">Literary Fiction</span>
+            <span class="genre-desc">Prize-winners, debuts and slow burns</span>
+            <span class="genre-go">Browse <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="genre-stack" aria-hidden="true"><i></i><i></i><i></i></span>
+          </a>
+          <a class="genre-tile reveal reveal-d1" href="shop.html?genre=crime" style="--tile:#1f1a17;--tile-fg:#f5eee1;--s1:#d7372f;--s2:#e9dcc3;--s3:#8a7b6e">
+            <span class="genre-name">Crime &amp; Mystery</span>
+            <span class="genre-desc">Cosy, clever and properly chilling</span>
+            <span class="genre-go">Browse <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="genre-stack" aria-hidden="true"><i></i><i></i><i></i></span>
+          </a>
+          <a class="genre-tile reveal reveal-d2" href="shop.html?genre=sff" style="--tile:#1d2d4f;--tile-fg:#f5eee1;--s1:#f2c14e;--s2:#9aa7d9;--s3:#e8b4a6">
+            <span class="genre-name">Sci-Fi &amp; Fantasy</span>
+            <span class="genre-desc">Other worlds and strange futures</span>
+            <span class="genre-go">Browse <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="genre-stack" aria-hidden="true"><i></i><i></i><i></i></span>
+          </a>
+          <a class="genre-tile reveal reveal-d3" href="shop.html?genre=history" style="--tile:#d9a441;--tile-fg:#2a1d14;--s1:#7b1e2c;--s2:#fbf6ea;--s3:#1f4e5a">
+            <span class="genre-name">History &amp; Biography</span>
+            <span class="genre-desc">Lives, ledgers and lost worlds</span>
+            <span class="genre-go">Browse <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="genre-stack" aria-hidden="true"><i></i><i></i><i></i></span>
+          </a>
+          <a class="genre-tile reveal" href="shop.html?genre=poetry" style="--tile:#9cc3d5;--tile-fg:#1d2d4f;--s1:#1d2d4f;--s2:#fbf6ea;--s3:#c9707d">
+            <span class="genre-name">Poetry</span>
+            <span class="genre-desc">Small presses and big voices</span>
+            <span class="genre-go">Browse <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="genre-stack" aria-hidden="true"><i></i><i></i><i></i></span>
+          </a>
+          <a class="genre-tile reveal reveal-d1" href="shop.html?genre=nature" style="--tile:#4e6245;--tile-fg:#f5eee1;--s1:#cfe3d4;--s2:#e3aa3f;--s3:#e9dcc3">
+            <span class="genre-name">Nature &amp; Travel</span>
+            <span class="genre-desc">Hedgerows, mountains and long walks</span>
+            <span class="genre-go">Browse <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="genre-stack" aria-hidden="true"><i></i><i></i><i></i></span>
+          </a>
+          <a class="genre-tile reveal reveal-d2" href="shop.html?genre=food" style="--tile:#e8b4a6;--tile-fg:#3b1d14;--s1:#7b1e2c;--s2:#fbf6ea;--s3:#66652b">
+            <span class="genre-name">Food &amp; Drink</span>
+            <span class="genre-desc">Cookbooks with stories between the recipes</span>
+            <span class="genre-go">Browse <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="genre-stack" aria-hidden="true"><i></i><i></i><i></i></span>
+          </a>
+          <a class="genre-tile reveal reveal-d3" href="shop.html?genre=kids" style="--tile:#f3d98b;--tile-fg:#2f4a3a;--s1:#e2725b;--s2:#1d2d4f;--s3:#9cc3d5">
+            <span class="genre-name">Children’s</span>
+            <span class="genre-desc">Picture books to first chapter books</span>
+            <span class="genre-go">Browse <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="genre-stack" aria-hidden="true"><i></i><i></i><i></i></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ STAFF PICKS ============================ -->
+    <section class="section" id="staff-picks" aria-labelledby="picks-title">
+      <div class="container">
+        <div class="section-head section-head--row reveal">
+          <div>
+            <p class="eyebrow">Shelf talkers</p>
+            <h2 class="section-title" id="picks-title">Staff picks, in their own words</h2>
+            <p class="section-lead">Every book on this table comes with a handwritten card from the bookseller who could not stop talking about it.</p>
+          </div>
+          <a class="link-arrow" href="shop.html?picks=1">All staff picks <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+        <div class="row row-cols-1 row-cols-lg-2 g-4">
+          
+            <div class="col">
+              <article class="pick reveal">
+                <a class="pick-cover" href="book.html?id=nine-days-in-ferrow" tabindex="-1" aria-hidden="true"><div data-cover="nine-days-in-ferrow" class="cover cover--bigtype " data-f="black" style="--bg:#1c1a19;--fg:#f3ead8;--ac:#d7372f;--ts:16.23cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Mystery</span><span class="cover-title"><span>Nine</span> <span>Days</span> <span>in</span> <span>Ferrow</span></span><span class="cover-author">Sadie Quill</span></span></div></a>
+                <div class="note">
+                  <p class="note-text">&ldquo;Do <u>not</u> read the last page first. Day seven made me put it down and walk a full lap of the shop.&rdquo;</p>
+                  <p class="note-sig"><span>&mdash; Jonah</span> <small>Crime & sci-fi shelves</small></p>
+                </div>
+                <h3 class="pick-title"><a href="book.html?id=nine-days-in-ferrow">Nine Days in Ferrow</a></h3>
+                <p class="pick-author">Sadie Quill</p>
+                <div class="pick-foot">
+                  <span class="price">$14.99 <span>Paperback</span></span>
+                  <button type="button" class="btn-add" data-add="nine-days-in-ferrow" data-format="pb" aria-label="Add Nine Days in Ferrow, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg><span class="btn-add-label">Add</span></button>
+                </div>
+              </article>
+            </div>
+            <div class="col">
+              <article class="pick reveal reveal-d1">
+                <a class="pick-cover" href="book.html?id=the-badger-who-borrowed-books" tabindex="-1" aria-hidden="true"><div data-cover="the-badger-who-borrowed-books" class="cover cover--arch " data-f="black" style="--bg:#f3d98b;--fg:#2f4a3a;--ac:#2f4a3a;--ts:9.87cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-title"><span>The</span> <span>Badger</span> <span>Who</span> <span>Borrowed</span> <span>Books</span></span><span class="cover-author">Milo Pennington</span></span></div></a>
+                <div class="note">
+                  <p class="note-text">&ldquo;Read it at Saturday storytime and forty small people went completely silent. An instant bedtime classic.&rdquo;</p>
+                  <p class="note-sig"><span>&mdash; Mags</span> <small>Children’s buyer</small></p>
+                </div>
+                <h3 class="pick-title"><a href="book.html?id=the-badger-who-borrowed-books">The Badger Who Borrowed Books</a></h3>
+                <p class="pick-author">Milo Pennington</p>
+                <div class="pick-foot">
+                  <span class="price">$7.99 <span>Paperback</span></span>
+                  <button type="button" class="btn-add" data-add="the-badger-who-borrowed-books" data-format="pb" aria-label="Add The Badger Who Borrowed Books, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg><span class="btn-add-label">Add</span></button>
+                </div>
+              </article>
+            </div>
+            <div class="col">
+              <article class="pick reveal">
+                <a class="pick-cover" href="book.html?id=the-hedgerow-year" tabindex="-1" aria-hidden="true"><div data-cover="the-hedgerow-year" class="cover cover--blob " data-f="serif" style="--bg:#e7dfc6;--fg:#2f3a28;--ac:#5d6e52;--ts:13.00cqi;--a2:#8fa183;--a3:#c4553a;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-title"><span>The</span> <span>Hedgerow</span> <span>Year</span></span><span class="cover-author">Tobias Greenhalgh</span></span></div></a>
+                <div class="note">
+                  <p class="note-text">&ldquo;One hedge, twelve months, and now I stop at every bramble on my walk to work. Quietly life-changing.&rdquo;</p>
+                  <p class="note-sig"><span>&mdash; Theo</span> <small>Poetry & nature</small></p>
+                </div>
+                <h3 class="pick-title"><a href="book.html?id=the-hedgerow-year">The Hedgerow Year</a></h3>
+                <p class="pick-author">Tobias Greenhalgh</p>
+                <div class="pick-foot">
+                  <span class="price">$15.99 <span>Paperback</span></span>
+                  <button type="button" class="btn-add" data-add="the-hedgerow-year" data-format="pb" aria-label="Add The Hedgerow Year, paperback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg><span class="btn-add-label">Add</span></button>
+                </div>
+              </article>
+            </div>
+            <div class="col">
+              <article class="pick reveal reveal-d1">
+                <a class="pick-cover" href="book.html?id=pickled-potted-preserved" tabindex="-1" aria-hidden="true"><div data-cover="pickled-potted-preserved" class="cover cover--awning " data-f="black" style="--bg:#f4ead5;--fg:#3b1d14;--ac:#d9604a;--ts:10.82cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">Recipes</span><span class="cover-title"><span>Pickled,</span> <span>Potted,</span> <span>Preserved</span></span><span class="cover-author">Agnes Mulroney</span></span></div></a>
+                <div class="note">
+                  <p class="note-text">&ldquo;The damson cheese on page 88 is worth the price alone. My kitchen has smelled of vinegar since August.&rdquo;</p>
+                  <p class="note-sig"><span>&mdash; Ines</span> <small>History & food</small></p>
+                </div>
+                <h3 class="pick-title"><a href="book.html?id=pickled-potted-preserved">Pickled, Potted, Preserved</a></h3>
+                <p class="pick-author">Agnes Mulroney</p>
+                <div class="pick-foot">
+                  <span class="price">$26.00 <span>Hardback</span></span>
+                  <button type="button" class="btn-add" data-add="pickled-potted-preserved" data-format="hb" aria-label="Add Pickled, Potted, Preserved, hardback, to basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg><span class="btn-add-label">Add</span></button>
+                </div>
+              </article>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ EVENTS ============================ -->
+    <section class="section section--paper2" id="events" aria-labelledby="events-title">
+      <div class="container">
+        <div class="section-head section-head--row reveal">
+          <div>
+            <p class="eyebrow">Author events</p>
+            <h2 class="section-title" id="events-title">Readings, launches and storytime</h2>
+            <p class="section-lead">Most evenings upstairs are free, with sixty chairs and signed copies at the till. Reserve a seat so we know how many chairs to put out.</p>
+          </div>
+          <a class="link-arrow" href="#newsletter">Hear about events first <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+        <div class="row gy-5 gx-lg-5">
+          <div class="col-lg-7">
+            <ol class="event-list">
+              <li class="event">
+                <div class="event-date" aria-hidden="true"><span class="event-month">Oct</span><span class="event-day">1</span><span class="event-dow">Thu</span></div>
+                <div>
+                  <p class="event-type">Author talk <span class="visually-hidden">on Thursday 1 October, 7:00pm</span></p>
+                  <h3 class="event-title">Ada Merriweather in conversation</h3>
+                  <p class="event-desc">The author of <em>The Lantern Keepers</em> talks lighthouses, sisters and forty years of logbooks with our manager Hattie Brennan, then signs copies.</p>
+                  <ul class="event-meta">
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>7:00pm</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>The reading room</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A2.5 2.5 0 0 0 5.5 6h13A2.5 2.5 0 0 0 21 8.5v1.5a2 2 0 0 0 0 4v1.5a2.5 2.5 0 0 0-2.5 2.5h-13A2.5 2.5 0 0 0 3 15.5V14a2 2 0 0 0 0-4Z"/><path d="M14.5 6.5v11" stroke-dasharray="1.5 2.2"/></svg>Free, booking essential</li>
+                  </ul>
+                </div>
+                <button type="button" class="btn btn-outline-ink btn-sm" data-bs-toggle="modal" data-bs-target="#reserve" data-event="Ada Merriweather in conversation" data-when="Thursday 1 October, 7:00pm">Reserve a seat<span class="visually-hidden"> for Ada Merriweather in conversation</span></button>
+              </li>
+              <li class="event">
+                <div class="event-date" aria-hidden="true"><span class="event-month">Oct</span><span class="event-day">10</span><span class="event-dow">Sat</span></div>
+                <div>
+                  <p class="event-type">Storytime <span class="visually-hidden">on Saturday 10 October, 10:30am</span></p>
+                  <h3 class="event-title">Storytime with Hazel Ottaway</h3>
+                  <p class="event-desc">Hazel reads <em>Pip and the Paper Moon</em>, then helps everyone fold a paper moon to take home. Best for ages 3 to 6, grown-ups welcome.</p>
+                  <ul class="event-meta">
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>10:30am</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Children&rsquo;s corner</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A2.5 2.5 0 0 0 5.5 6h13A2.5 2.5 0 0 0 21 8.5v1.5a2 2 0 0 0 0 4v1.5a2.5 2.5 0 0 0-2.5 2.5h-13A2.5 2.5 0 0 0 3 15.5V14a2 2 0 0 0 0-4Z"/><path d="M14.5 6.5v11" stroke-dasharray="1.5 2.2"/></svg>Free</li>
+                  </ul>
+                </div>
+                <button type="button" class="btn btn-outline-ink btn-sm" data-bs-toggle="modal" data-bs-target="#reserve" data-event="Storytime with Hazel Ottaway" data-when="Saturday 10 October, 10:30am">Reserve a seat<span class="visually-hidden"> for Storytime with Hazel Ottaway</span></button>
+              </li>
+              <li class="event">
+                <div class="event-date" aria-hidden="true"><span class="event-month">Oct</span><span class="event-day">22</span><span class="event-dow">Thu</span></div>
+                <div>
+                  <p class="event-type">Poetry night <span class="visually-hidden">on Thursday 22 October, 7:30pm</span></p>
+                  <h3 class="event-title">Tidal Hymns: a launch and open mic</h3>
+                  <p class="event-desc">Amadou Kessler reads from his debut collection, followed by an open mic. Five-minute slots; sign up on the night.</p>
+                  <ul class="event-meta">
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>7:30pm</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>The reading room</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A2.5 2.5 0 0 0 5.5 6h13A2.5 2.5 0 0 0 21 8.5v1.5a2 2 0 0 0 0 4v1.5a2.5 2.5 0 0 0-2.5 2.5h-13A2.5 2.5 0 0 0 3 15.5V14a2 2 0 0 0 0-4Z"/><path d="M14.5 6.5v11" stroke-dasharray="1.5 2.2"/></svg>$5, off the book</li>
+                  </ul>
+                </div>
+                <button type="button" class="btn btn-outline-ink btn-sm" data-bs-toggle="modal" data-bs-target="#reserve" data-event="Tidal Hymns: a launch and open mic" data-when="Thursday 22 October, 7:30pm">Reserve a seat<span class="visually-hidden"> for Tidal Hymns: a launch and open mic</span></button>
+              </li>
+              <li class="event">
+                <div class="event-date" aria-hidden="true"><span class="event-month">Nov</span><span class="event-day">5</span><span class="event-dow">Thu</span></div>
+                <div>
+                  <p class="event-type">Crime panel <span class="visually-hidden">on Thursday 5 November, 7:00pm</span></p>
+                  <h3 class="event-title">Murder at the Bell &amp; Anchor</h3>
+                  <p class="event-desc">Sadie Quill and Morwenna Kite on island mysteries, pub quizzes and how to hide a clue in plain sight.</p>
+                  <ul class="event-meta">
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>7:00pm</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>The Bell &amp; Anchor, Market Row</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A2.5 2.5 0 0 0 5.5 6h13A2.5 2.5 0 0 0 21 8.5v1.5a2 2 0 0 0 0 4v1.5a2.5 2.5 0 0 0-2.5 2.5h-13A2.5 2.5 0 0 0 3 15.5V14a2 2 0 0 0 0-4Z"/><path d="M14.5 6.5v11" stroke-dasharray="1.5 2.2"/></svg>$10 with a drink</li>
+                  </ul>
+                </div>
+                <button type="button" class="btn btn-outline-ink btn-sm" data-bs-toggle="modal" data-bs-target="#reserve" data-event="Murder at the Bell &amp; Anchor" data-when="Thursday 5 November, 7:00pm">Reserve a seat<span class="visually-hidden"> for Murder at the Bell &amp; Anchor</span></button>
+              </li>
+            </ol>
+          </div>
+          <div class="col-lg-5">
+            <div class="events-aside reveal">
+              <figure class="events-photo">
+                <img src="img/events.jpg" alt="Long shelves of old books under a row of warm hanging bulbs" width="1000" height="920" loading="lazy">
+              </figure>
+              <div class="events-note">
+                <h3>Launching a book?</h3>
+                <p>We host around forty events a year for local writers and small presses. Write to <a href="mailto:hello@example.com">hello@example.com</a> with your publication date.</p>
+              </div>
+              <div class="weekly">
+                <h3 class="weekly-title">Every week at the shop</h3>
+                <ul class="weekly-list">
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5C5.8 4.3 8.9 4.3 12 6.3c3.1-2 6.2-2 9-.8v13c-2.8-1.2-5.9-1.2-9 .8-3.1-2-6.2-2-9-.8Z"/><path d="M12 6.3v13"/></svg><span><strong>Saturday storytime</strong>10:30am in the children&rsquo;s corner. Free, no booking.</span></li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v4.5A5.5 5.5 0 0 1 11.5 19h-2A5.5 5.5 0 0 1 4 13.5V9Z"/><path d="M17 11h1.3a2.5 2.5 0 0 1 0 5H17M8 3.5v2.5M12 3.5v2.5"/></svg><span><strong>Thursday late opening</strong>Until 9pm, with coffee from the caf&eacute; next door.</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ BOOK CLUB ============================ -->
+    <section class="section club on-dark" id="book-club" aria-labelledby="club-title">
+      <div class="container">
+        <div class="row align-items-center gy-5 gx-lg-5">
+          <div class="col-lg-5 reveal">
+            <figure class="club-photo">
+              <img src="img/nook.jpg" alt="A flowered teacup and pink hydrangeas in soft afternoon light" width="1100" height="860" loading="lazy">
+              <figcaption>Bring a mug. We supply the tea, the cake and the argument.</figcaption>
+            </figure>
+          </div>
+          <div class="col-lg-7">
+            <p class="eyebrow eyebrow--light">The Wren Street Book Club</p>
+            <h2 id="club-title">First Tuesday of the month, in the back room, with cake.</h2>
+            <p class="club-lead">Around thirty regulars and whoever wanders in. No homework beyond the book, and nobody minds if you only got halfway.</p>
+
+            <div class="club-now reveal">
+              <a href="book.html?id=the-lantern-keepers" tabindex="-1" aria-hidden="true"><div data-cover="the-lantern-keepers" class="cover cover--arch " data-f="serif" style="--bg:#1f3a4d;--fg:#f4ead5;--ac:#e3aa3f;--ts:13.00cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Novel</span><span class="cover-title"><span>The</span> <span>Lantern</span> <span>Keepers</span></span><span class="cover-author">Ada Merriweather</span></span></div></a>
+              <div>
+                <p class="club-now-label">Now reading, October</p>
+                <h3><a href="book.html?id=the-lantern-keepers">The Lantern Keepers</a></h3>
+                <p class="club-now-author">Ada Merriweather</p>
+                <dl class="club-facts">
+                  <div><dt>Meeting</dt><dd>Tuesday 6 October, 7pm</dd></div>
+                  <div><dt>Where</dt><dd>The back room, 14 Wren Street</dd></div>
+                  <div><dt>Cost</dt><dd>Free, tea and cake included</dd></div>
+                  <div><dt>Members</dt><dd>15% off each month&rsquo;s pick</dd></div>
+                </dl>
+                <div class="club-actions">
+                  <button type="button" class="btn btn-paper" data-add="the-lantern-keepers" data-format="pb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4M10 14h4"/></svg> Get the book, $17.00<span class="visually-hidden"> (paperback)</span></button>
+                  <a class="btn btn-outline-paper" href="#newsletter">Join the club</a>
+                </div>
+                <details class="club-questions">
+                  <summary>Questions for the discussion <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+                  <ol>
+                    <li>Each sister reads the logbooks differently. Whose reading did you trust most?</li>
+                    <li>The lighthouse is failing, but nobody wants to sell it. What is it really standing for?</li>
+                    <li>Why do you think their father never wrote down the last rescue?</li>
+                    <li>How did the winter weather change the way you read the final chapters?</li>
+                  </ol>
+                </details>
+              </div>
+            </div>
+
+            <h3 class="club-next-title">Coming up</h3>
+            <ol class="club-next">
+              <li><div data-cover="what-the-river-kept" class="cover cover--waves " data-f="italic" style="--bg:#2f4a3a;--fg:#f1e6cf;--ac:#9cc3d5;--ts:13.00cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Novel</span><span class="cover-title"><span>What</span> <span>the</span> <span>River</span> <span>Kept</span></span><span class="cover-author">Elspeth Maro</span></span></div><span><span class="club-next-month">November</span><a href="book.html?id=what-the-river-kept">What the River Kept</a></span></li>
+              <li><div data-cover="nine-days-in-ferrow" class="cover cover--bigtype " data-f="black" style="--bg:#1c1a19;--fg:#f3ead8;--ac:#d7372f;--ts:16.23cqi;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Mystery</span><span class="cover-title"><span>Nine</span> <span>Days</span> <span>in</span> <span>Ferrow</span></span><span class="cover-author">Sadie Quill</span></span></div><span><span class="club-next-month">December</span><a href="book.html?id=nine-days-in-ferrow">Nine Days in Ferrow</a></span></li>
+              <li><div data-cover="orbit-of-small-things" class="cover cover--orbit " data-f="wide" style="--bg:#141a33;--fg:#efe8ff;--ac:#f2c14e;--ts:11.00cqi;--a2:#9aa7d9;" aria-hidden="true"><span class="cover-art"></span><span class="cover-text"><span class="cover-kicker">A Novel</span><span class="cover-title"><span>Orbit</span> <span>of</span> <span>Small</span> <span>Things</span></span><span class="cover-author">Kenji Harlowe</span></span></div><span><span class="club-next-month">January</span><a href="book.html?id=orbit-of-small-things">Orbit of Small Things</a></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ NEWSLETTER ============================ -->
+    <section class="section section--paper2" id="newsletter" aria-labelledby="letter-title">
+      <div class="container">
+        <div class="letter reveal">
+          <div class="letter-stamp" aria-hidden="true"><span><svg  viewBox="0 0 44 44" aria-hidden="true">
+            <rect width="44" height="44" rx="12" fill="none"/>
+            <g fill="none" stroke="#f5eee1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 26.5c4.6-2 9.3-1.8 14 .8 4.7-2.6 9.4-2.8 14-.8v7c-4.6-2-9.3-1.8-14 .8-4.7-2.6-9.4-2.8-14-.8Z"/>
+              <path d="M22 27.3v7"/>
+              <path d="M22 26.6c-.2-6.2 1-11.6 4-16.4"/>
+            </g>
+            <g fill="#a9bb9c">
+              <ellipse cx="19.1" cy="21.6" rx="3.1" ry="1.25" transform="rotate(-28 19.1 21.6)"/>
+              <ellipse cx="25.6" cy="20.2" rx="3.1" ry="1.25" transform="rotate(22 25.6 20.2)"/>
+              <ellipse cx="20.4" cy="16.9" rx="2.7" ry="1.1" transform="rotate(-34 20.4 16.9)"/>
+              <ellipse cx="26.4" cy="15.4" rx="2.5" ry="1.05" transform="rotate(18 26.4 15.4)"/>
+              <ellipse cx="22.6" cy="12.6" rx="2.1" ry=".95" transform="rotate(-40 22.6 12.6)"/>
+            </g>
+          </svg><em>Friday post</em></span></div>
+          <div class="row gy-4 gx-lg-5 align-items-center">
+            <div class="col-lg-6">
+              <p class="eyebrow">The Friday Letter</p>
+              <h2 id="letter-title">New arrivals, events and one bookseller&rsquo;s rambling, every Friday.</h2>
+              <p>A short weekly email written by whoever is on the till. It is the first place we announce signed editions and event tickets.</p>
+              <ul class="letter-list">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>First look at signed and special editions</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Event seats before they are announced in the shop</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>One staff pick with a note too long for a shelf card</li>
+              </ul>
+            </div>
+            <div class="col-lg-6">
+              <form class="letter-form" data-validate aria-labelledby="letter-title">
+                <div class="form-fields">
+                  <div class="row g-3">
+                    <div class="col-sm-5">
+                      <label class="form-label" for="nl-name">First name <span class="text-soft fw-normal">(optional)</span></label>
+                      <input class="form-control" id="nl-name" name="name" type="text" autocomplete="given-name" data-name-field>
+                    </div>
+                    <div class="col-sm-7">
+                      <label class="form-label" for="nl-email">Email address</label>
+                      <input class="form-control" id="nl-email" name="email" type="email" autocomplete="email" required aria-describedby="nl-email-error" data-msg-required="Please enter your email address.">
+                      <span class="form-error" id="nl-email-error" data-error-for="nl-email"></span>
+                    </div>
+                    <div class="col-12">
+                      <fieldset class="interest-list">
+                        <legend>I mostly read</legend>
+                        <label class="chip-check"><input type="checkbox" name="interest" value="fiction" checked><span>Fiction</span></label>
+                        <label class="chip-check"><input type="checkbox" name="interest" value="crime"><span>Crime</span></label>
+                        <label class="chip-check"><input type="checkbox" name="interest" value="kids"><span>Children&rsquo;s books</span></label>
+                        <label class="chip-check"><input type="checkbox" name="interest" value="poetry"><span>Poetry</span></label>
+                        <label class="chip-check"><input type="checkbox" name="interest" value="events"><span>Events</span></label>
+                      </fieldset>
+                    </div>
+                    <div class="col-12">
+                      <button class="btn btn-primary btn-lg w-100" type="submit">Sign me up <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+                      <p class="form-fine">One email a week. Unsubscribe with one click, any time.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-success" data-success hidden tabindex="-1" role="status">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.2 2.8 2.8L16.2 9"/></svg>
+                  <h3>You are on the list<span data-success-name></span>.</h3>
+                  <p>Look out for the Friday Letter at the end of the week. If it has not arrived by Saturday, check your spam folder.</p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ VISIT ============================ -->
+    <section class="section" id="visit" aria-labelledby="visit-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Visit the shop</p>
+          <h2 class="section-title" id="visit-title">Three floors on Wren Street</h2>
+          <p class="section-lead">Fiction and new releases on the ground floor, children&rsquo;s books in the basement, and the reading room at the top of the stairs.</p>
+        </div>
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4">
+            <div class="visit-card reveal">
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg> Opening hours</h3>
+              <p class="open-status" data-open-status>Mon&ndash;Sat 9am&ndash;7pm, Sun 11am&ndash;5pm</p>
+              <table class="hours" data-hours>
+                <caption>Late opening on Thursdays for events.</caption>
+                <tbody>
+                  <tr data-day="1" data-open="9" data-close="19"><th scope="row">Monday</th><td>9am&ndash;7pm</td></tr>
+                  <tr data-day="2" data-open="9" data-close="19"><th scope="row">Tuesday</th><td>9am&ndash;7pm</td></tr>
+                  <tr data-day="3" data-open="9" data-close="19"><th scope="row">Wednesday</th><td>9am&ndash;7pm</td></tr>
+                  <tr data-day="4" data-open="9" data-close="21"><th scope="row">Thursday</th><td>9am&ndash;9pm</td></tr>
+                  <tr data-day="5" data-open="9" data-close="19"><th scope="row">Friday</th><td>9am&ndash;7pm</td></tr>
+                  <tr data-day="6" data-open="9" data-close="19"><th scope="row">Saturday</th><td>9am&ndash;7pm</td></tr>
+                  <tr data-day="0" data-open="11" data-close="17"><th scope="row">Sunday</th><td>11am&ndash;5pm</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="visit-card reveal reveal-d1">
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 9 5 4h14l1.5 5M4.5 9v11h15V9M3.5 9h17M9.5 20v-6h5v6"/></svg> Find us</h3>
+              <ul class="contact-list">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><strong>Address</strong>14 Wren Street, Millbrook</span></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h3.6l1.9 4.6-2.4 1.5a11 11 0 0 0 4.8 4.8l1.5-2.4L19 14.4V18a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg><span><strong>Phone</strong><a href="tel:+15550142270">(555) 014-2270</a></span></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg><span><strong>Email</strong><a href="mailto:hello@example.com">hello@example.com</a></span></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="15" rx="3"/><path d="M5 11h14M8 18v2.5M16 18v2.5"/><path d="M8.5 14.5h.01M15.5 14.5h.01" stroke-width="2.4"/></svg><span><strong>Getting here</strong>Buses 12 and 31 stop on Canal Lane. The car park opposite is free after 6pm.</span></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4.5" r="1.8"/><path d="M5 8.5 12 10l7-1.5M12 10v4l-3 6.5M12 14l3 6.5"/></svg><span><strong>Access</strong>Step-free entrance, a lift to every floor and a hearing loop at the till.</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="visit-card map-card reveal reveal-d2">
+              <svg class="map" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="map-title map-desc">
+              <title id="map-title">Map of Wren Street and the streets around the shop</title>
+              <desc id="map-desc">Folio &amp; Fern is on Wren Street at the corner of Market Row, opposite the car park and two minutes from the Canal Lane bus stop.</desc>
+              <rect width="400" height="300" fill="#efe6d3"/>
+              <g fill="#e2d3b8">
+                <rect x="12" y="12" width="120" height="96" rx="6"/><rect x="176" y="12" width="96" height="96" rx="6"/><rect x="306" y="12" width="84" height="96" rx="6"/>
+                <rect x="12" y="152" width="120" height="70" rx="6"/><rect x="306" y="152" width="84" height="136" rx="6"/>
+              </g>
+              <rect x="176" y="152" width="96" height="70" rx="6" fill="#cfdcc4"/>
+              <g fill="#a9bb9c"><circle cx="189" cy="166" r="7"/><circle cx="260" cy="168" r="8"/><circle cx="187" cy="206" r="6"/><circle cx="261" cy="207" r="7"/><circle cx="224" cy="192" r="8"/></g>
+              <path d="M-10 262 C 80 240, 150 290, 240 262 S 360 240, 410 256" fill="none" stroke="#b9ccd6" stroke-width="18" stroke-linecap="round"/>
+              <g fill="none" stroke="#fbf7ee" stroke-linecap="round">
+                <path d="M0 130H400" stroke-width="22"/>
+                <path d="M154 0V240" stroke-width="18"/>
+                <path d="M289 0V300" stroke-width="14"/>
+                <path d="M0 240H300" stroke-width="12"/>
+              </g>
+              <g font-family="Instrument Sans, sans-serif" font-size="10" font-weight="700" fill="#6b5d52" letter-spacing="1.5">
+                <text x="172" y="134">WREN STREET</text>
+                <text x="150" y="60" transform="rotate(-90 150 60)" text-anchor="middle">MARKET ROW</text>
+                <text x="190" y="244">CANAL LANE</text>
+                <text x="224" y="176" font-size="8" fill="#4e6245" text-anchor="middle">ST. ANNE&#8217;S</text>
+                <text x="224" y="208" font-size="8" fill="#4e6245" text-anchor="middle">GARDENS</text>
+              </g>
+              <g>
+                <rect x="190" y="36" width="60" height="44" rx="6" fill="#fbf7ee" stroke="#cbb89a"/>
+                <text x="220" y="64" text-anchor="middle" font-family="Instrument Sans, sans-serif" font-size="18" font-weight="700" fill="#28406e">P</text>
+                <circle cx="96" cy="240" r="9" fill="#28406e"/>
+                <text x="96" y="244" text-anchor="middle" font-family="Instrument Sans, sans-serif" font-size="10" font-weight="700" fill="#fff">B</text>
+              </g>
+              <g transform="translate(118 150)">
+                <ellipse cx="0" cy="2" rx="9" ry="3" fill="rgba(0,0,0,.18)"/>
+                <path d="M0 0c-7-8-13-14-13-21a13 13 0 0 1 26 0c0 7-6 13-13 21Z" fill="#7b1e2c"/>
+                <circle cx="0" cy="-21" r="5" fill="#f5eee1"/>
+              </g>
+              <g transform="translate(40 168)">
+                <rect width="96" height="24" rx="12" fill="#1f1a17"/>
+                <text x="48" y="16" text-anchor="middle" font-family="Playfair Display, serif" font-size="11.5" font-weight="700" fill="#f5eee1">Folio &amp; Fern</text>
+              </g>
+            </svg>
+              <div class="map-foot">
+                <span>Corner of Wren Street and Market Row</span>
+                <a class="link-arrow" href="https://maps.google.com/?q=14+Wren+Street" target="_blank" rel="noopener">Directions <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================ RESERVE A SEAT (modal) ============================ -->
+  <div class="modal fade" id="reserve" tabindex="-1" aria-labelledby="reserve-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title" id="reserve-title">Reserve a seat</h2>
+            <p class="modal-sub"><strong data-reserve-event>Author event</strong><br><span data-reserve-when></span></p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form data-validate>
+            <input type="hidden" name="event" value="">
+            <div class="form-fields">
+              <div class="mb-3">
+                <label class="form-label" for="rs-name">Your name</label>
+                <input class="form-control" id="rs-name" name="name" type="text" autocomplete="name" required aria-describedby="rs-name-error" data-name-field data-msg-required="Please tell us your name.">
+                <span class="form-error" id="rs-name-error" data-error-for="rs-name"></span>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="rs-email">Email address</label>
+                <input class="form-control" id="rs-email" name="email" type="email" autocomplete="email" required aria-describedby="rs-email-error" data-msg-required="Please enter your email address.">
+                <span class="form-error" id="rs-email-error" data-error-for="rs-email"></span>
+              </div>
+              <div class="mb-4">
+                <label class="form-label" for="rs-seats">Seats</label>
+                <select class="form-select" id="rs-seats" name="seats">
+                  <option>1</option><option selected>2</option><option>3</option><option>4</option>
+                </select>
+              </div>
+              <button class="btn btn-primary w-100" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A2.5 2.5 0 0 0 5.5 6h13A2.5 2.5 0 0 0 21 8.5v1.5a2 2 0 0 0 0 4v1.5a2.5 2.5 0 0 0-2.5 2.5h-13A2.5 2.5 0 0 0 3 15.5V14a2 2 0 0 0 0-4Z"/><path d="M14.5 6.5v11" stroke-dasharray="1.5 2.2"/></svg> Reserve</button>
+            </div>
+            <div class="form-success" data-success hidden tabindex="-1" role="status">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.2 2.8 2.8L16.2 9"/></svg>
+              <h3>See you there<span data-success-name></span>.</h3>
+              <p>Your seats for <strong data-reserve-event></strong> are held at the door until ten minutes before the start.</p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer class="site-footer">
+    <div class="footer-shelf" aria-hidden="true">
+      <div class="spines" data-spines></div>
+    </div>
+    <div class="footer-main">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <a class="brand" href="index.html" aria-label="Folio &amp; Fern Booksellers, home">
+              <svg class="brand-mark" viewBox="0 0 44 44" aria-hidden="true">
+            <rect width="44" height="44" rx="12" fill="#7b1e2c"/>
+            <g fill="none" stroke="#f5eee1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 26.5c4.6-2 9.3-1.8 14 .8 4.7-2.6 9.4-2.8 14-.8v7c-4.6-2-9.3-1.8-14 .8-4.7-2.6-9.4-2.8-14-.8Z"/>
+              <path d="M22 27.3v7"/>
+              <path d="M22 26.6c-.2-6.2 1-11.6 4-16.4"/>
+            </g>
+            <g fill="#a9bb9c">
+              <ellipse cx="19.1" cy="21.6" rx="3.1" ry="1.25" transform="rotate(-28 19.1 21.6)"/>
+              <ellipse cx="25.6" cy="20.2" rx="3.1" ry="1.25" transform="rotate(22 25.6 20.2)"/>
+              <ellipse cx="20.4" cy="16.9" rx="2.7" ry="1.1" transform="rotate(-34 20.4 16.9)"/>
+              <ellipse cx="26.4" cy="15.4" rx="2.5" ry="1.05" transform="rotate(18 26.4 15.4)"/>
+              <ellipse cx="22.6" cy="12.6" rx="2.1" ry=".95" transform="rotate(-40 22.6 12.6)"/>
+            </g>
+          </svg>
+              <span>
+                <span class="brand-name">BookNest</span>
+                <span class="brand-sub">Booksellers</span>
+              </span>
+            </a>
+            <p class="footer-about">An independent bookshop on Main Street since 2000. Three floors, eleven thousand books, six booksellers and one very old armchair.</p>
+          </div>
+          <div class="footer-col">
+            <h2>Shop</h2>
+            <ul class="footer-links">
+              <li><a href="shop.html">All books</a></li>
+              <li><a href="#new">New releases</a></li>
+              <li><a href="shop.html?picks=1">Staff picks</a></li>
+              <li><a href="shop.html?genre=kids">Children&rsquo;s books</a></li>
+              <li><a href="shop.html?stock=1">In stock today</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h2>The shop</h2>
+            <ul class="footer-links">
+              <li><a href="#events">Events</a></li>
+              <li><a href="#book-club">Book club</a></li>
+              <li><a href="#newsletter">The Friday Letter</a></li>
+              <li><a href="#visit">Opening hours</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h2>Find us</h2>
+            <address class="footer-address">
+              Main Street, Colombo&nbsp;<br>
+              <a href="tel:+15550142270">(011) 234-5678</a><br>
+              <a href="mailto:hello@example.com">contact@booknest.lk&nbsp;</a><br>
+              Mon&ndash;Sat 9am&ndash;7pm, Sun 11am&ndash;5pm
+            </address>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p class="m-0">&copy; <span data-year>2026</span> BookNest Booksellers. All rights reserved.</p>
+          <p class="m-0"><a href="https://uicookies.com/">&nbsp;</a></p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================ BASKET DRAWER ============================ -->
+  <div class="offcanvas offcanvas-end cart-drawer" tabindex="-1" id="cart" aria-labelledby="cart-title">
+    <div class="offcanvas-header">
+      <h2 class="offcanvas-title" id="cart-title" tabindex="-1">Your basket <span data-cart-heading-count></span></h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close basket"></button>
+    </div>
+    <div class="cart-ship">
+      <p data-ship-msg>You are <strong>$35.00</strong> away from free delivery.</p>
+      <div class="ship-track" aria-hidden="true"><span data-ship-bar></span></div>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="cart-lines" data-cart-items aria-label="Books in your basket"></ul>
+      <div class="cart-empty" data-cart-empty>
+        <svg viewBox="0 0 120 110" aria-hidden="true">
+          <path d="M22 38h76l-6 62H28Z" fill="#ede3d0" stroke="#6b5d52" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M44 38V28a16 16 0 0 1 32 0v10" fill="none" stroke="#6b5d52" stroke-width="2" stroke-linecap="round"/>
+          <path d="M60 58c-.3 9 1.2 17 5 24" fill="none" stroke="#4e6245" stroke-width="2" stroke-linecap="round"/>
+          <g fill="#93a687"><ellipse cx="56" cy="66" rx="5" ry="2" transform="rotate(-30 56 66)"/><ellipse cx="66" cy="63" rx="5" ry="2" transform="rotate(25 66 63)"/><ellipse cx="57" cy="74" rx="4.6" ry="1.9" transform="rotate(-25 57 74)"/><ellipse cx="67.5" cy="72" rx="4.4" ry="1.8" transform="rotate(30 67.5 72)"/></g>
+        </svg>
+        <h3>Your basket is empty</h3>
+        <p>Staff picks are a good place to start.</p>
+        <a class="btn btn-primary" href="shop.html?picks=1">Browse staff picks</a>
+      </div>
+    </div>
+    <div class="cart-footer" data-cart-footer hidden>
+      <dl class="cart-total"><dt>Subtotal</dt><dd data-cart-subtotal>$0.00</dd></dl>
+      <p class="small mb-3">Delivery and tax are worked out at checkout. Collecting from Wren Street is always free.</p>
+      <button type="button" class="btn btn-primary btn-lg w-100" data-checkout>Checkout</button>
+      <p class="cart-note" data-checkout-note hidden role="status">Checkout is not connected in this template. Link this button to your shop platform or payment provider to take orders.</p>
+    </div>
+  </div>
+
+  <!-- Visual toast (screen readers get the live region below instead) -->
+  <div class="toast-lite" data-toast aria-hidden="true">
+    <div class="toast-cover" data-toast-cover></div>
+    <div class="toast-text"><em>Added to basket</em><strong data-toast-title></strong><span data-toast-format></span></div>
+    <button type="button" tabindex="-1" data-toast-open>View</button>
+  </div>
+  <div class="visually-hidden" aria-live="polite" data-live></div>
+
+  <script src="js/vendor/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
