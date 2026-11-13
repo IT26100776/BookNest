@@ -29,6 +29,7 @@
             <a href="#books">Manage Books</a>
             <a href="#add-book">Add New Book</a>
             <a href="#inventory">Inventory</a>
+			<a href="#orders">Manage Orders</a>
             <a href="/admin/accounts.html" data-super-admin hidden>Admin Accounts</a>
             <a href="/admin/activity.html" data-super-admin hidden>Activity Logs</a>
         </nav>
@@ -333,6 +334,51 @@
             <p>Stock management functionality will be added here.</p>
 
         </section>
+		
+		<!-- ORDER MANAGEMENT -->
+<section id="orders" class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <h4>Order Management</h4>
+            <p>View customer orders from the order records.</p>
+        </div>
+
+        <button type="button" class="add-button"
+                id="refreshOrders">
+            Refresh Orders
+        </button>
+    </div>
+
+    <p id="orderMessage" role="status"></p>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Order Date</th>
+                    <th>Total</th>
+                    <th>Order Status</th>
+                    <th>Payment</th>
+                </tr>
+            </thead>
+
+            <tbody id="orderTableBody">
+                <tr>
+                    <td colspan="8" class="text-center">
+                        Click Refresh Orders to load orders.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+<!-- END ORDER MANAGEMENT -->
 
     </main>
 

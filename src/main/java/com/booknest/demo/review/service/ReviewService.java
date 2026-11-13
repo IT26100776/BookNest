@@ -4,12 +4,12 @@ import com.booknest.demo.review.model.Review;
 import com.booknest.demo.review.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.List; //store
 import java.util.UUID;
 
 @Service
 
-public class ReviewService {
+public class ReviewService { //as
     private final ReviewRepository repository;
 
     public ReviewService(ReviewRepository repository) {
@@ -38,7 +38,7 @@ public class ReviewService {
 
         List<Review> reviews = repository.findAll();
 
-        review.setId(UUID.randomUUID().toString());
+        review.setId(UUID.randomUUID().toString()); //why we use UUID instead of inte
 
         reviews.add(new PublicReview(
                 review.getId(),

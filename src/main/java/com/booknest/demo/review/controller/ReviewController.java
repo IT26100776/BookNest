@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Map; //returning e
 
-@RestController
+@RestController //sb annotion used to create rest Apis that recieve http req and return res
 @RequestMapping("/api/reviews")
 
 public class ReviewController {
@@ -26,7 +26,7 @@ public class ReviewController {
 
     @GetMapping("/book/{bookId}")
     public List<Review> getReviewsByBook(
-            @PathVariable String bookId) {
+            @PathVariable String bookId) { //indin
         return service.getReviewsByBook(bookId);
     }
 

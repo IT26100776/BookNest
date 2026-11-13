@@ -534,5 +534,125 @@ bookTableBody.addEventListener("click", async function(event) {
 
 });
 
+// ==========================================
+// ORDER MANAGEMENT
+// Load orders from Spring Boot API
+// ==========================================
+
+const ORDER_API_URL = "/api/orders";
+
+const orderTableBody = document.getElementById("orderTableBody");
+const orderMessage = document.getElementById("orderMessage");
+const refreshOrdersButton = document.getElementById("refreshOrders");
+
+// Load all orders
+async function loadOrders() {
+
+    try {
+
+        orderMessage.textContent = "Loading orders...";
+
+        const response = await fetch(ORDER_API_URL, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Unable to retrieve orders.");
+        }
+
+        const orders = await response.json();
+
+        displayOrders(orders);
+
+        orderMessage.textContent =
+            orders.length + " order(s) found.";
+
+    } catch (error) {
+
+        console.error("Order loading error:", error);
+
+        orderMessage.textContent =
+            "Failed to load orders. Please check the backend.";
+
+        orderTableBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center">
+                    Could not load order records.
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Display orders in the table
+function displayOrders(orders) {
+
+    orderTableBody.innerHTML = "";
+
+    if (!orders || orders.length === 0) {
+
+        orderTableBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center">
+                    No orders available.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    orders.forEach(order => {
+
+        const row = document.createElement("tr");
+
+        const values = [
+            "ORD-" + order.orderId,
+            order.customerName,
+            order.email,
+            order.phone,
+            order.orderDate
+                ? new Date(order.orderDate).toLocaleString()
+                : "",
+            "Rs. " + Number(order.totalAmount || 0).toLocaleString(
+                "en-LK",
+                { minimumFractionDigits: 2 }
+            ),
+            order.status,
+            order.paymentStatus
+        ];
+
+        values.forEach(value => {
+
+            const cell = document.createElement("td");
+
+            cell.textContent = value ?? "";
+
+            row.appendChild(cell);
+
+        });
+
+        orderTableBody.appendChild(row);
+
+    });
+}
+
+// Refresh orders when button is clicked
+if (refreshOrdersButton) {
+
+    refreshOrdersButton.addEventListener(
+        "click",
+        loadOrders
+    );
+
+}
+
+// Automatically load orders when admin page opens
+document.addEventListener("DOMContentLoaded", loadOrders);
+
+
 
 
